@@ -1,0 +1,67 @@
+<template>
+  <div>
+    <h1 class="mb-8 font-bold text-3xl">
+      <inertia-link class="text-indigo-400 hover:text-indigo-600" :href="route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')">$MODEL_NAME_PLURAL_HUMAN$</inertia-link>
+      <span class="text-indigo-400 font-medium">/</span> Create
+      {{ title }}
+    </h1>
+    <div class="bg-white rounded shadow overflow-hidden max-w-3xl">
+      <form @submit.prevent="submit">
+        <div class="p-8 -mr-6 -mb-8 flex flex-wrap">
+          $FIELDS$
+        </div>
+        <div class="px-8 py-4 bg-gray-100 border-t border-gray-200 flex justify-end items-center">
+          <loading-button :loading="sending" class="btn-indigo" type="submit">Create User</loading-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+import Layout from '@/Shared/Layout'
+import LoadingButton from '@/Shared/LoadingButton'
+$IMPORT_INPUT$
+
+export default {
+  metaInfo() {
+    return { title: this.title }
+  },
+  layout: Layout,
+  components: {
+    LoadingButton,
+    $IMPORT_COMPONENT$,
+  },
+  props: {
+    errors: Object,
+    data:Object,
+  },
+  remember: 'form',
+  data() {
+    return {
+      sending: false,
+      form: this.$inertia.form({
+        $FORM_FIELDS$,
+      }),
+    }
+  },
+  computed: {
+    title() {
+      return this.form.$PRIMARY_KEY_NAME$
+    },
+  },
+  methods: {
+    submit() {
+      this.form.put(this.route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.update',this.data.$PRIMARY_KEY_NAME$), {
+        onStart: () => this.sending = true,
+        onFinish: () => this.sending = false,
+      })
+    },
+    destroy() {
+      if (confirm('Are you sure you want to delete this $MODEL_NAME_PLURAL_SNAKE$?')) {
+        this.$inertia.delete(this.route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.destroy', this.data.$PRIMARY_KEY_NAME$))
+      }
+    },
+  },
+}
+</script>

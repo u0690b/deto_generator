@@ -1,0 +1,32 @@
+{
+    "name": "uugaa/deto_generator",
+    "description": "Generatre model",
+    "authors": [
+        {
+            "name": "Uuganbayar",
+            "email": "u0690n@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Deto\\Generator\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "\\Deto\\Generator\\DetoGeneratorServiceProvider"
+            ]
+        }
+    }
+}
