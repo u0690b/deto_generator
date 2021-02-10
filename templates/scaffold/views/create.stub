@@ -23,7 +23,7 @@ import LoadingButton from '@/Shared/LoadingButton'
 $IMPORT_INPUT$
 
 export default {
-  metaInfo: { title: 'Create User' },
+  metaInfo: { title: 'Create $MODEL_NAME_PLURAL_HUMAN$' },
   layout: Layout,
   components: {
     LoadingButton,

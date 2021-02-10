@@ -3,22 +3,11 @@
     <h1 class="mb-8 font-bold text-3xl">$MODEL_NAME_PLURAL_HUMAN$</h1>
     <div class="mb-6 flex justify-between items-center">
       <search-filter v-model="form.search" class="w-full max-w-md mr-4" @reset="reset">
-        <label class="block text-gray-700">Role:</label>
-        <select v-model="form.role" class="mt-1 w-full form-select">
-          <option :value="null" />
-          <option value="user">User</option>
-          <option value="owner">Owner</option>
-        </select>
-        <label class="mt-4 block text-gray-700">Trashed:</label>
-        <select v-model="form.trashed" class="mt-1 w-full form-select">
-          <option :value="null" />
-          <option value="with">With Trashed</option>
-          <option value="only">Only Trashed</option>
-        </select>
+$FILTER_RELATION_FIELDS_BODY$
       </search-filter>
       <inertia-link class="btn-indigo" :href="route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.create')">
         <span>Create</span>
-        <span class="hidden md:inline">$MODEL_NAME$</span>
+        <span class="hidden md:inline">$MODEL_NAME_PLURAL_HUMAN$</span>
       </inertia-link>
     </div>
     <div class="bg-white rounded shadow overflow-x-auto">
@@ -26,7 +15,7 @@
         <tr class="text-left font-bold">
           $FIELD_HEADERS$
         </tr>
-        <tr v-for="$MODEL_NAME_CAMEL$ in data" :key="$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$" class="hover:bg-gray-100 focus-within:bg-gray-100">
+        <tr v-for="$MODEL_NAME_CAMEL$ in $MODEL_NAME_PLURAL_CAMEL$.data" :key="$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$" class="hover:bg-gray-100 focus-within:bg-gray-100">
 $FIELD_BODY$
           <td class="border-t">
             <inertia-link class="px-6 py-4 flex items-center focus:text-indigo-500" :href="route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.edit', $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$)">
@@ -34,7 +23,7 @@ $FIELD_BODY$
             </inertia-link>
           </td>
         </tr>
-        <tr v-if="users.length === 0">
+        <tr v-if="$MODEL_NAME_PLURAL_CAMEL$.length === 0">
           <td class="border-t px-6 py-4" colspan="4">No $MODEL_NAME_PLURAL_HUMAN$ found.</td>
         </tr>
       </table>
@@ -48,31 +37,34 @@ import Layout from '@/Shared/Layout'
 import mapValues from 'lodash/mapValues'
 import pickBy from 'lodash/pickBy'
 import SearchFilter from '@/Shared/SearchFilter'
-import throttle from 'lodash/throttle'
-
+import debounce from 'lodash/debounce'
+$MY_SELECT_IMPORT$
 export default {
   metaInfo: { title: '$MODEL_NAME_PLURAL_HUMAN$' },
-  layout: Layout,
   components: {
     Icon,
     SearchFilter,
+    $MY_SELECT_CMP$
   },
+  layout: Layout,
   props: {
-    data: Array,
+    $MODEL_NAME_PLURAL_CAMEL$: Object,
     filters: Object,
+    host: String,
   },
   data() {
     return {
       form: {
+        $FILTER_RELATION_FIELDS$
         ...this.filters?this.filters:{},
       },
     }
   },
   watch: {
     form: {
-      handler: throttle(function() {
+      handler: debounce(function() {
         let query = pickBy(this.form)
-        this.$inertia.replace(this.route('users', Object.keys(query).length ? query : { remember: 'forget' }))
+        this.$inertia.replace(this.route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index', Object.keys(query).length ? query : { remember: 'forget' }))
       }, 150),
       deep: true,
     },

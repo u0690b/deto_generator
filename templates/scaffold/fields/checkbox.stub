@@ -1,1 +1,1 @@
-<text-input v-model="form.$FIELD_NAME$" type="checkbox" :error="errors.$FIELD_NAME$" class="pr-6 pb-8 w-full lg:w-1/2" label="$FIELD_NAME_TITLE$" />
+<checkbox-input v-model="form.$FIELD_NAME$" type="checkbox" :error="errors.$FIELD_NAME$" class="pr-6 pb-8 w-full lg:w-1/2" label="$FIELD_NAME_TITLE$" />

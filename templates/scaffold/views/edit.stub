@@ -2,7 +2,7 @@
   <div>
     <h1 class="mb-8 font-bold text-3xl">
       <inertia-link class="text-indigo-400 hover:text-indigo-600" :href="route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')">$MODEL_NAME_PLURAL_HUMAN$</inertia-link>
-      <span class="text-indigo-400 font-medium">/</span> Create
+      <span class="text-indigo-400 font-medium">/</span> Edit
       {{ title }}
     </h1>
     <div class="bg-white rounded shadow overflow-hidden max-w-3xl">
@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     title() {
-      return this.form.$PRIMARY_KEY_NAME$
+      return this.form.name ?? this.form.$PRIMARY_KEY_NAME$
     },
   },
   methods: {

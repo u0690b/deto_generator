@@ -40,11 +40,30 @@ class ControllerGenerator extends BaseGenerator
             implode(','.infy_nl_tab(1, 3), $this->generateResourceFields()),
             $templateData
         );
+        $templateData = str_replace('$FILTER_RELATION_WITH$', $this->generateFilterRelations(), $templateData);
         FileUtil::createFile($this->path, $this->fileName, $templateData);
         $this->commandData->commandComment("\nController created: ");
         $this->commandData->commandInfo($this->fileName);
     }
-
+    
+    private function generateFilterRelations():string
+    {
+        $relationWith = [];
+        foreach ($this->commandData->relations as $relation) {
+            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            
+            if ($relation->type==='mt1') {
+                $singularRelation="";
+                if (! empty($relation->relationName)) {
+                    $singularRelation = $relation->relationName;
+                } elseif (isset($relation->inputs[1])) {
+                    $singularRelation = Str::camel(str_replace('_id', '', strtolower($relation->inputs[1])));
+                }
+                $relationWith[] ="->with('$singularRelation:id,name')";
+            }
+        }
+        return implode("", $relationWith);
+    }
     private function generateResourceFields()
     {
         $resourceFields = [];

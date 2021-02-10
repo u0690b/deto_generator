@@ -1,0 +1,3 @@
+->when($filters['trashed'] ?? null, function ($query, $trashed) {
+        $query->onlyTrashed();
+})

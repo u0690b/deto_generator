@@ -56,6 +56,16 @@ class ModelGenerator extends BaseGenerator
 
     private function fillTemplate($templateData)
     {
+        $searchables = [];
+
+        foreach ($this->commandData->fields as $field) {
+            if ($field->isSearchable) {
+                $searchables[] = "'".$field->name."'";
+            }
+        }
+
+        $templateData = str_replace('$SEARCHABLE_FIELDS$', implode(','.infy_nl_tab(1, 2), $searchables), $templateData);
+        
         $rules = $this->generateRules();
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
@@ -103,7 +113,7 @@ class ModelGenerator extends BaseGenerator
         );
 
         $templateData = str_replace('$GENERATE_DATE$', date('F j, Y, g:i a T'), $templateData);
-
+        
         return $templateData;
     }
 
@@ -429,7 +439,7 @@ class ModelGenerator extends BaseGenerator
 
         return $casts;
     }
-
+   
     private function generateRelations()
     {
         $relations = [];

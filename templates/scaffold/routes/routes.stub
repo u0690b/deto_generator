@@ -1,9 +1,9 @@
-// Organizations
+// $MODEL_NAME_PLURAL$
 //Route::resource('$MODEL_NAME_PLURAL_CAMEL$', $NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class);
 
-Route::get('$MODEL_NAME_PLURAL_CAMEL$', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'index'])->name('organizations.index')->middleware('remember', 'auth');
-Route::get('$MODEL_NAME_PLURAL_CAMEL$/create', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'create'])->name('organizations.create')->middleware('auth');
-Route::post('$MODEL_NAME_PLURAL_CAMEL$', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'store'])->name('organizations.store')->middleware('auth');
-Route::get('$MODEL_NAME_PLURAL_CAMEL$/{$MODEL_NAME_CAMEL$}/edit', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'edit'])->name('organizations.edit')->middleware('auth');
-Route::put('$MODEL_NAME_PLURAL_CAMEL$/{$MODEL_NAME_CAMEL$}', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'update'])->name('organizations.update')->middleware('auth');
-Route::delete('$MODEL_NAME_PLURAL_CAMEL$/{$MODEL_NAME_CAMEL$}', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'destroy'])->name('organizations.destroy')->middleware('auth');
+Route::get('$MODEL_NAME_PLURAL_CAMEL$', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'index'])->name('$MODEL_NAME_PLURAL_SNAKE$.index')->middleware('remember', 'auth');
+Route::get('$MODEL_NAME_PLURAL_CAMEL$/create', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'create'])->name('$MODEL_NAME_PLURAL_SNAKE$.create')->middleware('auth');
+Route::post('$MODEL_NAME_PLURAL_CAMEL$', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'store'])->name('$MODEL_NAME_PLURAL_SNAKE$.store')->middleware('auth');
+Route::get('$MODEL_NAME_PLURAL_CAMEL$/{$MODEL_NAME_CAMEL$}/edit', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'edit'])->name('$MODEL_NAME_PLURAL_SNAKE$.edit')->middleware('auth');
+Route::put('$MODEL_NAME_PLURAL_CAMEL$/{$MODEL_NAME_CAMEL$}', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'update'])->name('$MODEL_NAME_PLURAL_SNAKE$.update')->middleware('auth');
+Route::delete('$MODEL_NAME_PLURAL_CAMEL$/{$MODEL_NAME_CAMEL$}', [$NAMESPACE_CONTROLLER$\$PATH_PREFIX$$MODEL_NAME$Controller::class, 'destroy'])->name('$MODEL_NAME_PLURAL_SNAKE$.destroy')->middleware('auth');

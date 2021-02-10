@@ -1,6 +1,6 @@
   <div class="mb-4">
-      <inertia-link class="flex items-center group py-3" :href="route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index')">
-        <icon name="office" class="w-4 h-4 mr-2" :class="isUrl('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index') ? 'fill-white' : 'fill-indigo-400 group-hover:fill-white'" />
-        <div :class="isUrl('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index') ? 'text-white' : 'text-indigo-300 group-hover:text-white'">$MODEL_NAME_PLURAL_HUMAN$</div>
+      <inertia-link class="flex items-center group py-3" :href="route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')">
+        <icon name="office" class="w-4 h-4 mr-2" :class="isUrl('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index') ? 'fill-white' : 'fill-indigo-400 group-hover:fill-white'" />
+        <div :class="isUrl('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index') ? 'text-white' : 'text-indigo-300 group-hover:text-white'">$MODEL_NAME_PLURAL_HUMAN$</div>
       </inertia-link>
     </div>

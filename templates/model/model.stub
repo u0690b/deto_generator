@@ -2,7 +2,6 @@
 
 namespace $NAMESPACE_MODEL$;
 
-use Illuminate\Database\Eloquent\Model;
 $SOFT_DELETE_IMPORT$
 $HAS_FACTORY_IMPORT$
 
@@ -39,4 +38,32 @@ $PRIMARY$
     ];
 
     $RELATIONS$
+
+    /**
+     * @var array
+     */
+    public static $searchIn = [
+        $SEARCHABLE_FIELDS$
+    ];
+
+    /**
+    * Filter Model
+    * param Array $filters
+    * return $MODEL_NAME$
+    */
+    public function scopeFilter(Builder $query, array $filters)
+    {
+        if (count($filters)) {
+            foreach ($filters as $key => $value) {
+                if (! $value) {
+                    continue;
+                }
+                if ($key === 'search') {
+                    $this->buildSearch($query, $filters['search']??'', $MODEL_NAME$::$searchIn);
+                } elseif (in_array($key, $MODEL_NAME$::$searchIn)) {
+                    $query->where($key, $value);
+                }
+            }
+        }
+    }
 }

@@ -26,7 +26,35 @@ class GeneratorFieldRelation
 
         return $relation;
     }
+    public function getRelationFilter($relationText = null)
+    {
+        $singularRelation = (!empty($this->relationName)) ? $this->relationName : Str::camel($relationText);
+        $pluralRelation = (!empty($this->relationName)) ? $this->relationName : Str::camel(Str::plural($relationText));
 
+        switch ($this->type) {
+            case 'mt1':
+                if (!empty($this->relationName)) {
+                    $singularRelation = $this->relationName;
+                } elseif (isset($this->inputs[1])) {
+                    $singularRelation = Str::camel(str_replace('_id', '', strtolower($this->inputs[1])));
+                }
+                $functionName = $singularRelation;
+                $relation = 'belongsTo';
+                $relationClass = 'BelongsTo';
+                break;
+            default:
+                $functionName = '';
+                $relation = '';
+                $relationClass = '';
+                break;
+        }
+
+        if (!empty($functionName) and !empty($relation)) {
+            return $this->generateRelation($functionName, $relation, $relationClass);
+        }
+
+        return '';
+    }
     public function getRelationFunctionText($relationText = null)
     {
         $singularRelation = (!empty($this->relationName)) ? $this->relationName : Str::camel($relationText);

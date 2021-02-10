@@ -74,10 +74,14 @@ class HTMLFieldGenerator
             case 'file':
             case 'email':
             case 'password':
-            case 'number':
-            case 'checkbox':
             case 'radio':
                 $fieldTemplate = "import TextInput from '@/Shared/TextInput'";
+                break;
+            case 'number':
+                $fieldTemplate = "import NumberInput from '@/Shared/NumberInput'";
+                break;
+            case 'checkbox':
+                $fieldTemplate =  "import CheckboxInput from '@/Shared/CheckboxInput'";
                 break;
             case 'select':
             case 'enum':
@@ -102,10 +106,14 @@ class HTMLFieldGenerator
             case 'file':
             case 'email':
             case 'password':
-            case 'number':
-            case 'checkbox':
             case 'radio':
                 $fieldTemplate = "TextInput";
+                break;
+            case 'checkbox':
+                $fieldTemplate = "CheckboxInput";
+                break;
+            case 'number':
+                $fieldTemplate = "NumberInput";
                 break;
             case 'select':
             case 'enum':

@@ -80,7 +80,7 @@ class ViewGenerator extends BaseGenerator
 
         $this->commandData->commandComment('Views created: ');
     }
-
+    
     private function generateTable()
     {
         $templateData = $this->generateBladeTableBody();
@@ -113,7 +113,54 @@ class ViewGenerator extends BaseGenerator
 
         $this->commandData->commandInfo('datatables_actions.blade.php created');
     }
+    
+    private function generateFilter_Relation_Fields($templateData)
+    {
+        $bodyFields = [];
+        $filters=[];
+        $templateFieldData = get_template('scaffold.views.filter_field', $this->templateType);
+        $MY_SELECT_CMP="";
+        $MY_SELECT_IMPORT="";
+        foreach ($this->commandData->relations as $relation) {
+            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            
+            if ($relation->type==='mt1') {
+                $singularRelation="";
+                if (! empty($relation->relationName)) {
+                    $singularRelation = $relation->relationName;
+                } elseif (isset($relation->inputs[1])) {
+                    $singularRelation = Str::camel(str_replace('_id', '', strtolower($relation->inputs[1])));
+                }
+                
+                $relationWith[] ="->with('$singularRelation:id,name')";
+            }
+        }
+        foreach ($this->commandData->fields as $field) {
+            if (! Str::endsWith($field->name, '_id')) {
+                continue;
+            }
+            $filters[] = "$field->name: null,";
+            $FILTER_RELATION_MODEL_NAME = Str::camel(Str::plural(str_replace('_id', '', strtolower($relation->inputs[1]))));
+            $this->commandData->addDynamicVariable('$FILTER_RELATION_MODEL_NAME$', $FILTER_RELATION_MODEL_NAME);
+            $bodyFields[] = fill_template_with_field_data(
+                $this->commandData->dynamicVars,
+                $this->commandData->fieldNamesMapping,
+                $templateFieldData,
+                $field
+            );
 
+            
+
+            $MY_SELECT_IMPORT="import MySelect from '@/Shared/MySelect'";
+            $MY_SELECT_CMP = "MySelect,";
+        }
+        
+        $templateData=str_replace('$MY_SELECT_CMP$', $MY_SELECT_CMP, $templateData);
+        $templateData=str_replace('$MY_SELECT_IMPORT$', $MY_SELECT_IMPORT, $templateData);
+
+        $templateData=str_replace('$FILTER_RELATION_FIELDS$', implode("\n", $filters), $templateData);
+        return str_replace('$FILTER_RELATION_FIELDS_BODY$', implode("\n", $bodyFields), $templateData);
+    }
     private function generateBladeTableBody($templateData)
     {
         $templateName="blade_table_body";
@@ -126,6 +173,7 @@ class ViewGenerator extends BaseGenerator
         $templateData = str_replace('$FIELD_HEADERS$', $tableFields, $templateData);
 
         $cellFieldTemplate = get_template('scaffold.views.table_cell', $this->templateType);
+        $templateData=$this->generateFilter_Relation_Fields($templateData);
 
         $tableBodyFields = [];
 
@@ -336,16 +384,16 @@ class ViewGenerator extends BaseGenerator
         );
         $templateData = str_replace(
             '$IMPORT_INPUT$',
-            implode(','.infy_nl(1), $this->generateImport()),
+            implode("\n", $this->generateImport()),
             $templateData
         );
         $templateData = str_replace(
             '$IMPORT_COMPONENT$',
-            implode(','.infy_nl(1), $this->generateComponent()),
+            implode(",\n    ", $this->generateComponent()),
             $templateData
         );
         
-        FileUtil::createFile($this->path, Str::camel($templateName).'.vue', $templateData);
+        FileUtil::createFile($this->path, ucfirst($templateName).'.vue', $templateData);
         $this->commandData->commandInfo('field.blade.php created');
     }
     private function generateImport()
