@@ -2,6 +2,8 @@
 
 namespace $NAMESPACE_MODEL$;
 
+use Illuminate\Database\Eloquent\Builder;
+
 $SOFT_DELETE_IMPORT$
 $HAS_FACTORY_IMPORT$
 
@@ -60,7 +62,7 @@ $PRIMARY$
                 }
                 if ($key === 'search') {
                     $this->buildSearch($query, $filters['search']??'', $MODEL_NAME$::$searchIn);
-                } elseif (in_array($key, $MODEL_NAME$::$searchIn)) {
+                } else {
                     $query->where($key, $value);
                 }
             }

@@ -75,7 +75,7 @@ class GeneratorFieldRelation
                 if (!empty($this->relationName)) {
                     $singularRelation = $this->relationName;
                 } elseif (isset($this->inputs[1])) {
-                    $singularRelation = Str::camel(str_replace('_id', '', strtolower($this->inputs[1])));
+                    $singularRelation = Str::snake(str_replace('_id', '', strtolower($this->inputs[1])));
                 }
                 $functionName = $singularRelation;
                 $relation = 'belongsTo';

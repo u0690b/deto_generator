@@ -49,7 +49,7 @@ export default {
   layout: Layout,
   props: {
     $MODEL_NAME_PLURAL_CAMEL$: Object,
-    filters: Object,
+    filters: [Object,Array],
     host: String,
   },
   data() {

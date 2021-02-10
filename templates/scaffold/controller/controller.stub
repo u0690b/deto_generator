@@ -3,11 +3,11 @@
 namespace $NAMESPACE_CONTROLLER$;
 
 use $NAMESPACE_APP$\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Redirect;
 use App\Models\$MODEL_NAME$;
-use Response;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
+use Response;
 
 class $MODEL_NAME$Controller extends Controller
 {
@@ -23,7 +23,7 @@ class $MODEL_NAME$Controller extends Controller
             return json_encode($$MODEL_NAME_PLURAL_CAMEL$->only('$PRIMARY_KEY_NAME$', 'name'));
         }
         return Inertia::render('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/Index', [
-            'filters' => Request::only(Common::$searchIn),
+            'filters' => Request::only(["search", ...Common::$searchIn]),
             '$MODEL_NAME_PLURAL_CAMEL$' => $$MODEL_NAME_PLURAL_CAMEL$,
             'host' => config('app.url'),
         ]);
@@ -36,7 +36,7 @@ class $MODEL_NAME$Controller extends Controller
      */
     public function create()
     {
-        return Inertia::render('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/Create');
+        return Inertia::render('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/Create', ['host' => config('app.url')]);
     }
 
     /**
@@ -60,9 +60,8 @@ class $MODEL_NAME$Controller extends Controller
     public function edit($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
         return Inertia::render('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/Edit', [
-            'data' => [
-                $RESOURCE_FIELDS$
-            ],
+            'data' =>  $$MODEL_NAME_CAMEL$->only($RESOURCE_FIELDS$),
+            'host' => config('app.url'),
         ]);
     }
 
@@ -76,7 +75,7 @@ class $MODEL_NAME$Controller extends Controller
     public function update($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
         $$MODEL_NAME_CAMEL$->update(Request::validate($MODEL_NAME$::$rules));
-        return Redirect::back()->with('success', '$MODEL_NAME$ updated.');
+        return Redirect::route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')->with('success', '$MODEL_NAME$ updated.');
     }
 
     /**
@@ -91,6 +90,6 @@ class $MODEL_NAME$Controller extends Controller
     public function destroy($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
         $$MODEL_NAME_CAMEL$->delete();
-        return Redirect::back()->with('success', '$MODEL_NAME$ updated.');
+        return Redirect::route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')->with('success', '$MODEL_NAME$ deleted.');
     }
 }

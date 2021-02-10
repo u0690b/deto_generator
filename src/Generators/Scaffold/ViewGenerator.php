@@ -121,26 +121,13 @@ class ViewGenerator extends BaseGenerator
         $templateFieldData = get_template('scaffold.views.filter_field', $this->templateType);
         $MY_SELECT_CMP="";
         $MY_SELECT_IMPORT="";
-        foreach ($this->commandData->relations as $relation) {
-            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
-            
-            if ($relation->type==='mt1') {
-                $singularRelation="";
-                if (! empty($relation->relationName)) {
-                    $singularRelation = $relation->relationName;
-                } elseif (isset($relation->inputs[1])) {
-                    $singularRelation = Str::camel(str_replace('_id', '', strtolower($relation->inputs[1])));
-                }
-                
-                $relationWith[] ="->with('$singularRelation:id,name')";
-            }
-        }
+      
         foreach ($this->commandData->fields as $field) {
             if (! Str::endsWith($field->name, '_id')) {
                 continue;
             }
             $filters[] = "$field->name: null,";
-            $FILTER_RELATION_MODEL_NAME = Str::camel(Str::plural(str_replace('_id', '', strtolower($relation->inputs[1]))));
+            $FILTER_RELATION_MODEL_NAME = Str::camel(Str::plural(str_replace('_id', '', strtolower($field->name))));
             $this->commandData->addDynamicVariable('$FILTER_RELATION_MODEL_NAME$', $FILTER_RELATION_MODEL_NAME);
             $bodyFields[] = fill_template_with_field_data(
                 $this->commandData->dynamicVars,
@@ -181,13 +168,22 @@ class ViewGenerator extends BaseGenerator
             if (! $field->inIndex) {
                 continue;
             }
-
-            $tableBodyFields[] = fill_template_with_field_data(
-                $this->commandData->dynamicVars,
-                $this->commandData->fieldNamesMapping,
-                $cellFieldTemplate,
-                $field
-            );
+            if (Str::endsWith($field->name, '_id')) {
+                $filledcellFieldTemplate=str_replace('$FIELD_NAME$', Str::replaceLast('_id', '.name', $field->name), $cellFieldTemplate);
+                $tableBodyFields[] = fill_template_with_field_data(
+                    $this->commandData->dynamicVars,
+                    $this->commandData->fieldNamesMapping,
+                    $filledcellFieldTemplate,
+                    $field
+                );
+            } else {
+                $tableBodyFields[] = fill_template_with_field_data(
+                    $this->commandData->dynamicVars,
+                    $this->commandData->fieldNamesMapping,
+                    $cellFieldTemplate,
+                    $field
+                );
+            }
         }
 
         $tableBodyFields = implode("", $tableBodyFields);
@@ -330,7 +326,14 @@ class ViewGenerator extends BaseGenerator
             $this->commandData->addDynamicVariable('$SIZE$', $minMaxRules);
 
             $fieldTemplate = HTMLFieldGenerator::generateHTML($field, $this->templateType, $localized);
-
+            if (Str::endsWith($field->name, '_id')) {
+                $fieldTemplate = get_template('scaffold.fields.my_select', $this->templateType);
+                if ($templateName=="create") {
+                    $fieldTemplate=str_replace('$FIELD_NAME_OBJECT$', 'null', $fieldTemplate);
+                } else {
+                    $fieldTemplate=str_replace('$FIELD_NAME_OBJECT$', "data.". Str::replaceLast('_id', '', $field->name), $fieldTemplate);
+                }
+            }
             if ($field->htmlType === 'selectTable') {
                 $inputArr = explode(',', $field->htmlValues[1]);
                 $columns = '';

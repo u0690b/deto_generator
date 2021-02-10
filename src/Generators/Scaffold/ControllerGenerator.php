@@ -35,11 +35,7 @@ class ControllerGenerator extends BaseGenerator
         $templateData = get_template("scaffold.controller.$templateName", 'deto_generator');
         $templateData = str_replace('$RENDER_TYPE$', 'all()', $templateData);
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
-        $templateData = str_replace(
-            '$RESOURCE_FIELDS$',
-            implode(','.infy_nl_tab(1, 3), $this->generateResourceFields()),
-            $templateData
-        );
+        $templateData = str_replace('$RESOURCE_FIELDS$', implode(',', $this->generateResourceFields()), $templateData);
         $templateData = str_replace('$FILTER_RELATION_WITH$', $this->generateFilterRelations(), $templateData);
         FileUtil::createFile($this->path, $this->fileName, $templateData);
         $this->commandData->commandComment("\nController created: ");
@@ -57,7 +53,7 @@ class ControllerGenerator extends BaseGenerator
                 if (! empty($relation->relationName)) {
                     $singularRelation = $relation->relationName;
                 } elseif (isset($relation->inputs[1])) {
-                    $singularRelation = Str::camel(str_replace('_id', '', strtolower($relation->inputs[1])));
+                    $singularRelation = Str::snake(str_replace('_id', '', strtolower($relation->inputs[1])));
                 }
                 $relationWith[] ="->with('$singularRelation:id,name')";
             }
@@ -68,7 +64,10 @@ class ControllerGenerator extends BaseGenerator
     {
         $resourceFields = [];
         foreach ($this->commandData->fields as $field) {
-            $resourceFields[] = "'".$field->name."' => \$".Str::camel($this->commandData->modelName).'->'.$field->name;
+            if (Str::endsWith($field->name, '_id')) {
+                $resourceFields[] = "'".Str::replaceLast('_id', '', $field->name)."'";
+            }
+            $resourceFields[] = "'".$field->name."'";
         }
 
         return $resourceFields;

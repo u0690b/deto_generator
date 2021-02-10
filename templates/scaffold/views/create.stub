@@ -10,7 +10,7 @@
           $FIELDS$
         </div>
         <div class="px-8 py-4 bg-gray-100 border-t border-gray-200 flex justify-end items-center">
-          <loading-button :loading="sending" class="btn-indigo" type="submit">Create User</loading-button>
+          <loading-button :loading="sending" class="btn-indigo" type="submit">Create $MODEL_NAME_PLURAL_HUMAN$</loading-button>
         </div>
       </form>
     </div>
@@ -24,13 +24,15 @@ $IMPORT_INPUT$
 
 export default {
   metaInfo: { title: 'Create $MODEL_NAME_PLURAL_HUMAN$' },
-  layout: Layout,
   components: {
     LoadingButton,
     $IMPORT_COMPONENT$,
   },
+  layout: Layout,
   props: {
     errors: Object,
+    data:Object,
+    host: String,
   },
   remember: 'form',
   data() {
