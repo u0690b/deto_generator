@@ -70,10 +70,10 @@ class BaseCommand extends Command
             $modelGenerator->generate();
         }
 
-        if (! $this->isSkip('repository') && $this->commandData->getOption('repositoryPattern')) {
-            $repositoryGenerator = new RepositoryGenerator($this->commandData);
-            $repositoryGenerator->generate();
-        }
+        // if (! $this->isSkip('repository') && $this->commandData->getOption('repositoryPattern')) {
+        //     $repositoryGenerator = new RepositoryGenerator($this->commandData);
+        //     $repositoryGenerator->generate();
+        // }
 
         if ($this->commandData->getOption('factory') || (
             ! $this->isSkip('tests') and $this->commandData->getAddOn('tests')
@@ -91,8 +91,8 @@ class BaseCommand extends Command
     public function generateAPIItems()
     {
         if (! $this->isSkip('requests') and ! $this->isSkip('api_requests')) {
-            $requestGenerator = new APIRequestGenerator($this->commandData);
-            $requestGenerator->generate();
+            // $requestGenerator = new APIRequestGenerator($this->commandData);
+            // $requestGenerator->generate();
         }
 
         if (! $this->isSkip('controllers') and ! $this->isSkip('api_controller')) {
@@ -106,10 +106,10 @@ class BaseCommand extends Command
         }
 
         if (! $this->isSkip('tests') and $this->commandData->getAddOn('tests')) {
-            if ($this->commandData->getOption('repositoryPattern')) {
-                $repositoryTestGenerator = new RepositoryTestGenerator($this->commandData);
-                $repositoryTestGenerator->generate();
-            }
+            // if ($this->commandData->getOption('repositoryPattern')) {
+            //     $repositoryTestGenerator = new RepositoryTestGenerator($this->commandData);
+            //     $repositoryTestGenerator->generate();
+            // }
 
             $apiTestGenerator = new APITestGenerator($this->commandData);
             $apiTestGenerator->generate();

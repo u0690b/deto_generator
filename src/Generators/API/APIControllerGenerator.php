@@ -26,11 +26,8 @@ class APIControllerGenerator extends BaseGenerator
 
     public function generate()
     {
-        if ($this->commandData->getOption('repositoryPattern')) {
-            $templateName = 'api_controller';
-        } else {
-            $templateName = 'model_api_controller';
-        }
+        $templateName = 'model_api_controller';
+       
 
         if ($this->commandData->isLocalizedTemplates()) {
             $templateName .= '_locale';
@@ -41,7 +38,7 @@ class APIControllerGenerator extends BaseGenerator
         }
 
         $templateData = get_template("api.controller.$templateName", 'deto_generator');
-
+        $templateData = str_replace('$FILTER_RELATION_WITH$', $this->generateFilterRelations(), $templateData);
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
         $templateData = $this->fillDocs($templateData);
 
@@ -50,7 +47,24 @@ class APIControllerGenerator extends BaseGenerator
         $this->commandData->commandComment("\nAPI Controller created: ");
         $this->commandData->commandInfo($this->fileName);
     }
-
+    private function generateFilterRelations():string
+    {
+        $relationWith = [];
+        foreach ($this->commandData->relations as $relation) {
+            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+            
+            if ($relation->type==='mt1') {
+                $singularRelation="";
+                if (! empty($relation->relationName)) {
+                    $singularRelation = $relation->relationName;
+                } elseif (isset($relation->inputs[1])) {
+                    $singularRelation = Str::snake(str_replace('_id', '', strtolower($relation->inputs[1])));
+                }
+                $relationWith[] ="->with('$singularRelation:id,name')";
+            }
+        }
+        return implode("", $relationWith);
+    }
     private function fillDocs($templateData)
     {
         $methods = ['controller', 'index', 'store', 'show', 'update', 'destroy'];

@@ -38,16 +38,12 @@ class APIRoutesGenerator extends BaseGenerator
 
     public function generate()
     {
-        $this->routeContents .= "\n\n".$this->routesTemplate;
-        $existingRouteContents = file_get_contents($this->path);
-        if (Str::contains($existingRouteContents, "Route::resource('".$this->commandData->config->mSnakePlural."',")) {
-            $this->commandData->commandObj->info('Menu '.$this->commandData->config->mPlural.'is already exists, Skipping Adjustment.');
-
+        if (Str::contains($this->routeContents, $this->routesTemplate)) {
+            $this->commandData->commandObj->info('API Route '.$this->commandData->config->mPlural.' is already exists, Skipping Adjustment.');
             return;
         }
-
+        $this->routeContents .= "\n\n".$this->routesTemplate;
         file_put_contents($this->path, $this->routeContents);
-
         $this->commandData->commandComment("\n".$this->commandData->config->mCamelPlural.' api routes added.');
     }
 

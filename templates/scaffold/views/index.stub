@@ -28,6 +28,7 @@ $FIELD_BODY$
         </tr>
       </table>
     </div>
+    <pagination :links="$MODEL_NAME_PLURAL_CAMEL$.links" />
   </div>
 </template>
 
@@ -35,6 +36,7 @@ $FIELD_BODY$
 import Icon from '@/Shared/Icon'
 import Layout from '@/Shared/Layout'
 import mapValues from 'lodash/mapValues'
+import Pagination from '@/Shared/Pagination'
 import pickBy from 'lodash/pickBy'
 import SearchFilter from '@/Shared/SearchFilter'
 import debounce from 'lodash/debounce'
@@ -43,6 +45,7 @@ export default {
   metaInfo: { title: '$MODEL_NAME_PLURAL_HUMAN$' },
   components: {
     Icon,
+    Pagination,
     SearchFilter,
     $MY_SELECT_CMP$
   },

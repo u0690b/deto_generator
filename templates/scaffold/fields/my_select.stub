@@ -1,1 +1,1 @@
-<my-select :value="$FIELD_NAME_OBJECT$" type="text" :error="errors.$FIELD_NAME$" class="pr-6 pb-8 w-full lg:w-1/2" label="$FIELD_NAME_TITLE$" :url="`${host}/$FILTER_RELATION_MODEL_NAME$`" @changeId="id=>form.$FIELD_NAME$=id" />
+<my-select :value="$FIELD_NAME_OBJECT$" type="text" :error="errors.$FIELD_NAME$" class="pr-6 pb-8 w-full lg:w-1/2" label="$FIELD_NAME_TITLE$" :url="`${host}/$FILTER_RELATION_MODEL_NAME_SNAKE$`" @changeId="id=>form.$FIELD_NAME$=id" />

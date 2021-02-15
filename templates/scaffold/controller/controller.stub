@@ -23,7 +23,7 @@ class $MODEL_NAME$Controller extends Controller
             return json_encode($$MODEL_NAME_PLURAL_CAMEL$->only('$PRIMARY_KEY_NAME$', 'name'));
         }
         return Inertia::render('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/Index', [
-            'filters' => Request::only(["search", ...Common::$searchIn]),
+            'filters' => Request::only(["search", ...$MODEL_NAME$::$searchIn]),
             '$MODEL_NAME_PLURAL_CAMEL$' => $$MODEL_NAME_PLURAL_CAMEL$,
             'host' => config('app.url'),
         ]);

@@ -127,16 +127,23 @@ class ViewGenerator extends BaseGenerator
                 continue;
             }
             $filters[] = "$field->name: null,";
-            $FILTER_RELATION_MODEL_NAME = Str::camel(Str::plural(str_replace('_id', '', strtolower($field->name))));
-            $this->commandData->addDynamicVariable('$FILTER_RELATION_MODEL_NAME$', $FILTER_RELATION_MODEL_NAME);
+            // $FILTER_RELATION_MODEL_NAME = Str::camel(Str::plural(str_replace('_id', '', strtolower($field->name))));
+            // $this->commandData->addDynamicVariable('$FILTER_RELATION_MODEL_NAME$', $FILTER_RELATION_MODEL_NAME);
+            // $bodyFields[] = fill_template_with_field_data(
+            //     $this->commandData->dynamicVars,
+            //     $this->commandData->fieldNamesMapping,
+            //     $templateFieldData,
+            //     $field
+            // );
+
+            $FILTER_RELATION_MODEL_NAME_SNAKE = Str::snake(Str::plural(str_replace('_id', '', strtolower($field->name))));
+            $this->commandData->addDynamicVariable('$FILTER_RELATION_MODEL_NAME_SNAKE$', $FILTER_RELATION_MODEL_NAME_SNAKE);
             $bodyFields[] = fill_template_with_field_data(
                 $this->commandData->dynamicVars,
                 $this->commandData->fieldNamesMapping,
                 $templateFieldData,
                 $field
             );
-
-            
 
             $MY_SELECT_IMPORT="import MySelect from '@/Shared/MySelect'";
             $MY_SELECT_CMP = "MySelect,";

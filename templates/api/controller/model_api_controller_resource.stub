@@ -2,86 +2,47 @@
 
 namespace $NAMESPACE_API_CONTROLLER$;
 
-use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
-use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
-use $NAMESPACE_MODEL$\$MODEL_NAME$;
-use Illuminate\Http\Request;
-use $NAMESPACE_APP$\Http\Controllers\AppBaseController;
+use $NAMESPACE_APP$\Http\Controllers\Controller;
 use $NAMESPACE_API_RESOURCE$\$MODEL_NAME$Resource;
+use $NAMESPACE_MODEL$\$MODEL_NAME$;
+use Illuminate\Support\Facades\Request;
 use Response;
 
 $DOC_CONTROLLER$
-class $MODEL_NAME$APIController extends AppBaseController
+class $MODEL_NAME$APIController extends Controller
 {
     $DOC_INDEX$
-    public function index(Request $request)
+    public function index()
     {
-        $query = $MODEL_NAME$::query();
-
-        if ($request->get('skip')) {
-            $query->skip($request->get('skip'));
-        }
-        if ($request->get('limit')) {
-            $query->limit($request->get('limit'));
-        }
-
-        $$MODEL_NAME_PLURAL_CAMEL$ = $query->get();
-
-        return $this->sendResponse($MODEL_NAME$Resource::collection($$MODEL_NAME_PLURAL_CAMEL$), '$MODEL_NAME_PLURAL_HUMAN$ retrieved successfully');
+        $$MODEL_NAME_PLURAL_CAMEL$ = $MODEL_NAME$::filter(Request::all(["search", ...$MODEL_NAME$::$searchIn]))$FILTER_RELATION_WITH$->paginate();
+        return $MODEL_NAME$Resource::collection($$MODEL_NAME_PLURAL_CAMEL$);
     }
 
     $DOC_STORE$
-    public function store(Create$MODEL_NAME$APIRequest $request)
+    public function store()
     {
-        $input = $request->all();
-
         /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::create($input);
-
-        return $this->sendResponse(new $MODEL_NAME$Resource($$MODEL_NAME_CAMEL$), '$MODEL_NAME_HUMAN$ saved successfully');
+        $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::create(Request::validate($MODEL_NAME$::$rules));
+        return new $MODEL_NAME$Resource($$MODEL_NAME_CAMEL$);
     }
 
     $DOC_SHOW$
-    public function show($id)
+    public function show($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
-        /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::find($id);
-
-        if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError('$MODEL_NAME_HUMAN$ not found');
-        }
-
-        return $this->sendResponse(new $MODEL_NAME$Resource($$MODEL_NAME_CAMEL$), '$MODEL_NAME_HUMAN$ retrieved successfully');
+        return new $MODEL_NAME$Resource($$MODEL_NAME_CAMEL$);
     }
 
     $DOC_UPDATE$
-    public function update($id, Update$MODEL_NAME$APIRequest $request)
+    public function update($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
-        /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::find($id);
-
-        if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError('$MODEL_NAME_HUMAN$ not found');
-        }
-
-        $$MODEL_NAME_CAMEL$->fill($request->all());
-        $$MODEL_NAME_CAMEL$->save();
-
-        return $this->sendResponse(new $MODEL_NAME$Resource($$MODEL_NAME_CAMEL$), '$MODEL_NAME$ updated successfully');
+        $$MODEL_NAME_CAMEL$->update(Request::validate($MODEL_NAME$::$rules));
+        return new $MODEL_NAME$Resource($$MODEL_NAME_CAMEL$);
     }
 
     $DOC_DESTROY$
-    public function destroy($id)
+    public function destroy($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
-        /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::find($id);
-
-        if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError('$MODEL_NAME_HUMAN$ not found');
-        }
-
         $$MODEL_NAME_CAMEL$->delete();
-
-        return $this->sendSuccess('$MODEL_NAME_HUMAN$ deleted successfully');
+        return response('deleted', 204);
     }
 }
