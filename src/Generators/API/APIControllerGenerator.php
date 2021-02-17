@@ -5,6 +5,7 @@ namespace Deto\Generator\Generators\API;
 use Deto\Generator\Common\CommandData;
 use Deto\Generator\Generators\BaseGenerator;
 use Deto\Generator\Utils\FileUtil;
+use Illuminate\Support\Str;
 
 class APIControllerGenerator extends BaseGenerator
 {

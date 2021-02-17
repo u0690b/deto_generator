@@ -152,7 +152,7 @@ class ViewGenerator extends BaseGenerator
         $templateData=str_replace('$MY_SELECT_CMP$', $MY_SELECT_CMP, $templateData);
         $templateData=str_replace('$MY_SELECT_IMPORT$', $MY_SELECT_IMPORT, $templateData);
 
-        $templateData=str_replace('$FILTER_RELATION_FIELDS$', implode("\n", $filters), $templateData);
+        $templateData=str_replace('$FILTER_RELATION_FIELDS$', implode(infy_nl_tab(1, 2, 2), $filters), $templateData);
         return str_replace('$FILTER_RELATION_FIELDS_BODY$', implode("\n", $bodyFields), $templateData);
     }
     private function generateBladeTableBody($templateData)
@@ -176,7 +176,8 @@ class ViewGenerator extends BaseGenerator
                 continue;
             }
             if (Str::endsWith($field->name, '_id')) {
-                $filledcellFieldTemplate=str_replace('$FIELD_NAME$', Str::replaceLast('_id', '.name', $field->name), $cellFieldTemplate);
+                $cellFieldTemplate1=str_replace('$FIELD_NAME$', Str::replaceLast('_id', '', $field->name).' ? $MODEL_NAME_CAMEL$.$FIELD_NAME$ : \'\'', $cellFieldTemplate);
+                $filledcellFieldTemplate=str_replace('$FIELD_NAME$', Str::replaceLast('_id', '.name', $field->name), $cellFieldTemplate1);
                 $tableBodyFields[] = fill_template_with_field_data(
                     $this->commandData->dynamicVars,
                     $this->commandData->fieldNamesMapping,
