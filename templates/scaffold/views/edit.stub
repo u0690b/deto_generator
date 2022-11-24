@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import Layout from '@/Layouts/Admin'
-import LoadingButton from '@/Components/LoadingButton'
+import Layout from '@/Layouts/Admin.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
 $IMPORT_INPUT$
 
 export default {

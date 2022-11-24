@@ -73,7 +73,7 @@ class HTMLFieldGenerator
         $fieldTemplate = '';
 
         if (Str::endsWith($field->name, '_id')) {
-            $fieldTemplate = "import MySelect from '@/Components/MySelect'";
+            $fieldTemplate = "import MySelect from '@/Components/MySelect.vue'";
         } else {
             switch ($field->htmlType) {
                 case 'text':
@@ -82,23 +82,23 @@ class HTMLFieldGenerator
                 case 'email':
                 case 'password':
                 case 'radio':
-                    $fieldTemplate = "import TextInput from '@/Components/MyInput'";
+                    $fieldTemplate = "import MyInput from '@/Components/MyInput.vue'";
                     break;
                 case 'textarea':
-                    $fieldTemplate = "import TextareaInput from '@/Components/TextareaInput'";
+                    $fieldTemplate = "import TextareaInput from '@/Components/TextareaInput.vue'";
                     break;
                 case 'number':
-                    $fieldTemplate = "import NumberInput from '@/Components/MyInput'";
+                    $fieldTemplate = "import NumberInput from '@/Components/MyInput.vue'";
                     break;
                 case 'checkbox':
-                    $fieldTemplate =  "import CheckboxInput from '@/Components/CheckboxInput'";
+                    $fieldTemplate =  "import CheckboxInput from '@/Components/CheckboxInput.vue'";
                     break;
                 case 'select':
                 case 'enum':
-                    $fieldTemplate = "import SelectInput from '@/Components/SelectInput'";
+                    $fieldTemplate = "import SelectInput from '@/Components/SelectInput.vue'";
                     break;
                 case 'toggle-switch':
-                    $fieldTemplate = "import ToggleInput from '@/Components/ToggleInput'";
+                    $fieldTemplate = "import ToggleInput from '@/Components/ToggleInput.vue'";
                     break;
             }
         }
@@ -119,7 +119,7 @@ class HTMLFieldGenerator
                 case 'email':
                 case 'password':
                 case 'radio':
-                    $fieldTemplate = "TextInput";
+                    $fieldTemplate = "MyInput";
                     break;
                 case 'textarea':
                     $fieldTemplate = "TextareaInput";

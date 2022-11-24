@@ -11,7 +11,7 @@ $FILTER_RELATION_FIELDS_BODY$
       </inertia-link>
     </div>
     <div class="bg-white rounded shadow overflow-x-auto">
-      <admin-table :headers="[$RESOURCE_FIELDS$]" :datas="datas" url="$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.edit"/>
+      <admin-table :headers="{$RESOURCE_FIELDS$}" :datas="datas" url="$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.edit"/>
       
     </div>
     <pagination :links="datas.links" />
@@ -19,11 +19,11 @@ $FILTER_RELATION_FIELDS_BODY$
 </template>
 
 <script>
-import Layout from '@/Layouts/Admin'
+import Layout from '@/Layouts/Admin.vue'
 import mapValues from 'lodash/mapValues'
-import Pagination from '@/Components/Pagination'
+import Pagination from '@/Components/Pagination.vue'
 import pickBy from 'lodash/pickBy'
-import SearchFilter from '@/Components/SearchFilter'
+import SearchFilter from '@/Components/SearchFilter.vue'
 import debounce from 'lodash/debounce'
 import AdminTable from '@/Components/AdminTable.vue'
 $MY_SELECT_IMPORT$

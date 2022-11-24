@@ -18,13 +18,14 @@ class $MODEL_NAME$Controller extends Controller
      */
     public function index()
     {
-        $$MODEL_NAME_PLURAL_CAMEL$ = $MODEL_NAME$::filter(Request::all(["search", ...$MODEL_NAME$::$searchIn]))$FILTER_RELATION_WITH$->paginate();
+        $$MODEL_NAME_PLURAL_CAMEL$ = $MODEL_NAME$::filter(Request::all(["search", ...$MODEL_NAME$::$searchIn]))$FILTER_RELATION_WITH$;
         if (Request::has('only')) {
-            return json_encode($$MODEL_NAME_PLURAL_CAMEL$->only('$PRIMARY_KEY_NAME$', 'name'));
+            return json_encode($$MODEL_NAME_PLURAL_CAMEL$->paginate(Request::input('per_page'),['$PRIMARY_KEY_NAME$', 'name']));
         }
         return Inertia::render('$VIEW_PREFIX1$$MODEL_NAME_PLURAL_SNAKE$/Index', [
             'filters' => Request::only(["search", ...$MODEL_NAME$::$searchIn]),
             'datas' => $$MODEL_NAME_PLURAL_CAMEL$
+                ->paginate(Request::input('per_page'))
                 ->withQueryString()
                 ->through(fn ($row) => $row->only($RESOURCE_FIELDS$)),
             'host' => config('app.url'),

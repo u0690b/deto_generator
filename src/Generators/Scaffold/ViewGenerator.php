@@ -146,7 +146,7 @@ class ViewGenerator extends BaseGenerator
                 $field
             );
 
-            $MY_SELECT_IMPORT = "import MySelect from '@/Components/MySelect'";
+            $MY_SELECT_IMPORT = "import MySelect from '@/Components/MySelect.vue'";
             $MY_SELECT_CMP = "MySelect,";
         }
 
@@ -340,6 +340,8 @@ class ViewGenerator extends BaseGenerator
             $fieldTemplate = HTMLFieldGenerator::generateHTML($field, $this->templateType, $localized);
             if (Str::endsWith($field->name, '_id')) {
                 $fieldTemplate = get_template('scaffold.fields.my_select', $this->templateType);
+                $FILTER_RELATION_MODEL_NAME_SNAKE = Str::snake(Str::plural(str_replace('_id', '', strtolower($field->name))));
+                $this->commandData->addDynamicVariable('$FILTER_RELATION_MODEL_NAME_SNAKE$', $FILTER_RELATION_MODEL_NAME_SNAKE);
                 if ($templateName == "create") {
                     $fieldTemplate = str_replace('$FIELD_NAME_OBJECT$', 'null', $fieldTemplate);
                 } else {
@@ -436,9 +438,9 @@ class ViewGenerator extends BaseGenerator
                 continue;
             }
             if (Str::endsWith($field->name, '_id')) {
-                $resourceFields[] = "'" . Str::replaceLast('_id', '', $field->name) . ".name'";
+                $resourceFields[] = "'" . Str::replaceLast('_id', '', $field->name) . ".name':'" . $field->description . "'";
             }
-            $resourceFields[] = "'" . $field->name . "'";
+            $resourceFields[] = "'" . $field->name . "':'" . $field->description . "'";
         }
 
         return $resourceFields;
@@ -517,7 +519,7 @@ class ViewGenerator extends BaseGenerator
             }
             $singleFieldStr = str_replace(
                 '$FIELD_NAME_TITLE$',
-                Str::title(str_replace('_', ' ', $field->name)),
+                Str::title(str_replace('_', ' ', $field->description)),
                 $fieldTemplate
             );
             $singleFieldStr = str_replace('$FIELD_NAME$', $field->name, $singleFieldStr);

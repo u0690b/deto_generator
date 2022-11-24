@@ -50,24 +50,14 @@ $PRIMARY$
 
     /**
     * Filter Model
-    * param Array $filters
-    * return $MODEL_NAME$
+    * @param Array $filters
+    * @return App\Models\$MODEL_NAME$
     */
     public function scopeFilter(Builder $query, array $filters)
     {
         if (count($filters)) {
-            foreach ($filters as $key => $value) {
-                if (! $value) {
-                    continue;
-                }
-                if ($key === 'search') {
-                    $this->buildSearch($query, $filters['search'] ?? '', $MODEL_NAME$::$searchIn);
-                } elseif (is_array($value)) {
-                    $query = $query->whereIn($key, $value);
-                } else {
-                    $query->where($key, $value);
-                }
-            }
+            $this->buildFilter($query, $filters, $MODEL_NAME$::$searchIn);
         }
+        return $this;
     }
 }
