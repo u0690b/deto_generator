@@ -5,53 +5,39 @@
       <search-filter v-model="form.search" class="w-full max-w-md mr-4" @reset="reset">
 $FILTER_RELATION_FIELDS_BODY$
       </search-filter>
-      <inertia-link class="btn-indigo" :href="route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.create')">
+      <inertia-link class="btn-indigo" :href="route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.create')">
         <span>Create</span>
         <span class="hidden md:inline">$MODEL_NAME_PLURAL_HUMAN$</span>
       </inertia-link>
     </div>
     <div class="bg-white rounded shadow overflow-x-auto">
-      <table class="w-full whitespace-no-wrap">
-        <tr class="text-left font-bold">
-          $FIELD_HEADERS$
-        </tr>
-        <tr v-for="$MODEL_NAME_CAMEL$ in $MODEL_NAME_PLURAL_CAMEL$.data" :key="$MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$" class="hover:bg-gray-100 focus-within:bg-gray-100">
-$FIELD_BODY$
-          <td class="border-t">
-            <inertia-link class="px-6 py-4 flex items-center focus:text-indigo-500" :href="route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.edit', $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$)">
-              <icon name="cheveron-right" class="block w-6 h-6 fill-gray-400" />
-            </inertia-link>
-          </td>
-        </tr>
-        <tr v-if="$MODEL_NAME_PLURAL_CAMEL$.length === 0">
-          <td class="border-t px-6 py-4" colspan="4">No $MODEL_NAME_PLURAL_HUMAN$ found.</td>
-        </tr>
-      </table>
+      <admin-table :headers="[$RESOURCE_FIELDS$]" :datas="datas" url="$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.edit"/>
+      
     </div>
-    <pagination :links="$MODEL_NAME_PLURAL_CAMEL$.links" />
+    <pagination :links="datas.links" />
   </div>
 </template>
 
 <script>
-import Icon from '@/Shared/Icon'
-import Layout from '@/Shared/Layout'
+import Layout from '@/Layouts/Admin'
 import mapValues from 'lodash/mapValues'
-import Pagination from '@/Shared/Pagination'
+import Pagination from '@/Components/Pagination'
 import pickBy from 'lodash/pickBy'
-import SearchFilter from '@/Shared/SearchFilter'
+import SearchFilter from '@/Components/SearchFilter'
 import debounce from 'lodash/debounce'
+import AdminTable from '@/Components/AdminTable.vue'
 $MY_SELECT_IMPORT$
 export default {
   metaInfo: { title: '$MODEL_NAME_PLURAL_HUMAN$' },
   components: {
-    Icon,
     Pagination,
     SearchFilter,
+    AdminTable,
     $MY_SELECT_CMP$
   },
   layout: Layout,
   props: {
-    $MODEL_NAME_PLURAL_CAMEL$: Object,
+    datas: Object,
     filters: [Object,Array],
     host: String,
   },
@@ -66,8 +52,7 @@ export default {
   watch: {
     form: {
       handler: debounce(function() {
-        let query = pickBy(this.form)
-        this.$inertia.replace(this.route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index', Object.keys(query).length ? query : { remember: 'forget' }))
+        this.$inertia.get(this.route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.index'), pickBy(this.form), { preserveState: true })
       }, 150),
       deep: true,
     },

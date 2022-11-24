@@ -26,7 +26,7 @@ class MenuGenerator extends BaseGenerator
     public function __construct(CommandData $commandData)
     {
         $this->commandData = $commandData;
-        $this->path = resource_path('js/Shared/')."MainMenu.vue";
+        $this->path = resource_path('js/Components/') . "AdminMenu.vue";
         $this->templateType = config('deto.laravel_generator.templates', 'deto_generator');
 
         $this->menuContents = file_get_contents($this->path);
@@ -37,27 +37,27 @@ class MenuGenerator extends BaseGenerator
             $templateName .= '_locale';
         }
 
-        $this->menuTemplate = get_template('scaffold.layouts.'.$templateName, $this->templateType);
+        $this->menuTemplate = get_template('scaffold.layouts.' . $templateName, $this->templateType);
 
         $this->menuTemplate = fill_template($this->commandData->dynamicVars, $this->menuTemplate);
     }
 
     public function generate()
     {
-      
+
         // $this->menuContents .= $this->menuTemplate.infy_nl();
         // $existingMenuContents = file_get_contents($this->path);
-        if (Str::contains($this->menuContents, $this->menuTemplate.infy_nl(), )) {
-            $this->commandData->commandObj->info('Menu '.$this->commandData->config->mHumanPlural.' is already exists, Skipping Adjustment.');
+        if (Str::contains($this->menuContents, $this->menuTemplate . infy_nl(),)) {
+            $this->commandData->commandObj->info('Menu ' . $this->commandData->config->mHumanPlural . ' is already exists, Skipping Adjustment.');
             return;
         }
         $this->menuContents = str_replace(
             "</div>\n</template>",
-            $this->menuTemplate.infy_nl()."  </div>\n</template>",
+            $this->menuTemplate . infy_nl() . "  </div>\n</template>",
             $this->menuContents
         );
         file_put_contents($this->path, $this->menuContents);
-        $this->commandData->commandComment("\n".$this->commandData->config->mCamelPlural.' menu added.');
+        $this->commandData->commandComment("\n" . $this->commandData->config->mCamelPlural . ' menu added.');
     }
 
     public function rollback()

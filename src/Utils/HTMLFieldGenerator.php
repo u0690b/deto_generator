@@ -14,57 +14,57 @@ class HTMLFieldGenerator
         $localized = ($localized) ? '_locale' : '';
 
 
-        
-       
+
+
         switch ($field->htmlType) {
-                case 'text':
-                case 'textarea':
-                case 'date':
-                case 'file':
-                case 'email':
-                case 'password':
-                case 'number':
-                    $fieldTemplate = get_template('scaffold.fields.'.$field->htmlType.$localized, $templateType);
-                    break;
-                case 'select':
-                case 'enum':
-                    $fieldTemplate = get_template('scaffold.fields.select'.$localized, $templateType);
-                    $radioLabels = GeneratorFieldsInputUtil::prepareKeyValueArrFromLabelValueStr($field->htmlValues);
+            case 'text':
+            case 'textarea':
+            case 'date':
+            case 'file':
+            case 'email':
+            case 'password':
+            case 'number':
+                $fieldTemplate = get_template('scaffold.fields.' . $field->htmlType . $localized, $templateType);
+                break;
+            case 'select':
+            case 'enum':
+                $fieldTemplate = get_template('scaffold.fields.select' . $localized, $templateType);
+                $radioLabels = GeneratorFieldsInputUtil::prepareKeyValueArrFromLabelValueStr($field->htmlValues);
 
-                    $fieldTemplate = str_replace(
-                        '$INPUT_ARR$',
-                        GeneratorFieldsInputUtil::prepareKeyValueArrayStr($radioLabels),
-                        $fieldTemplate
-                    );
-                    break;
-                case 'checkbox':
-                    $fieldTemplate = get_template('scaffold.fields.checkbox'.$localized, $templateType);
-                    if (count($field->htmlValues) > 0) {
-                        $checkboxValue = $field->htmlValues[0];
-                    } else {
-                        $checkboxValue = 1;
-                    }
-                    $fieldTemplate = str_replace('$CHECKBOX_VALUE$', $checkboxValue, $fieldTemplate);
-                    break;
-                case 'radio':
-                    $fieldTemplate = get_template('scaffold.fields.radio_group'.$localized, $templateType);
-                    $radioTemplate = get_template('scaffold.fields.radio'.$localized, $templateType);
+                $fieldTemplate = str_replace(
+                    '$INPUT_ARR$',
+                    GeneratorFieldsInputUtil::prepareKeyValueArrayStr($radioLabels),
+                    $fieldTemplate
+                );
+                break;
+            case 'checkbox':
+                $fieldTemplate = get_template('scaffold.fields.checkbox' . $localized, $templateType);
+                if (count($field->htmlValues) > 0) {
+                    $checkboxValue = $field->htmlValues[0];
+                } else {
+                    $checkboxValue = 1;
+                }
+                $fieldTemplate = str_replace('$CHECKBOX_VALUE$', $checkboxValue, $fieldTemplate);
+                break;
+            case 'radio':
+                $fieldTemplate = get_template('scaffold.fields.radio_group' . $localized, $templateType);
+                $radioTemplate = get_template('scaffold.fields.radio' . $localized, $templateType);
 
-                    $radioLabels = GeneratorFieldsInputUtil::prepareKeyValueArrFromLabelValueStr($field->htmlValues);
+                $radioLabels = GeneratorFieldsInputUtil::prepareKeyValueArrFromLabelValueStr($field->htmlValues);
 
-                    $radioButtons = [];
-                    foreach ($radioLabels as $label => $value) {
-                        $radioButtonTemplate = str_replace('$LABEL$', $label, $radioTemplate);
-                        $radioButtonTemplate = str_replace('$VALUE$', $value, $radioButtonTemplate);
-                        $radioButtons[] = $radioButtonTemplate;
-                    }
-                    $fieldTemplate = str_replace('$RADIO_BUTTONS$', implode("\n", $radioButtons), $fieldTemplate);
-                    break;
-                case 'toggle-switch':
-                    $fieldTemplate = get_template('scaffold.fields.toggle-switch'.$localized, $templateType);
-                    break;
-            }
-        
+                $radioButtons = [];
+                foreach ($radioLabels as $label => $value) {
+                    $radioButtonTemplate = str_replace('$LABEL$', $label, $radioTemplate);
+                    $radioButtonTemplate = str_replace('$VALUE$', $value, $radioButtonTemplate);
+                    $radioButtons[] = $radioButtonTemplate;
+                }
+                $fieldTemplate = str_replace('$RADIO_BUTTONS$', implode("\n", $radioButtons), $fieldTemplate);
+                break;
+            case 'toggle-switch':
+                $fieldTemplate = get_template('scaffold.fields.toggle-switch' . $localized, $templateType);
+                break;
+        }
+
 
         return $fieldTemplate;
     }
@@ -73,7 +73,7 @@ class HTMLFieldGenerator
         $fieldTemplate = '';
 
         if (Str::endsWith($field->name, '_id')) {
-            $fieldTemplate = "import MySelect from '@/Shared/MySelect'";
+            $fieldTemplate = "import MySelect from '@/Components/MySelect'";
         } else {
             switch ($field->htmlType) {
                 case 'text':
@@ -82,23 +82,23 @@ class HTMLFieldGenerator
                 case 'email':
                 case 'password':
                 case 'radio':
-                    $fieldTemplate = "import TextInput from '@/Shared/TextInput'";
+                    $fieldTemplate = "import TextInput from '@/Components/MyInput'";
                     break;
                 case 'textarea':
-                    $fieldTemplate = "import TextareaInput from '@/Shared/TextareaInput'";
+                    $fieldTemplate = "import TextareaInput from '@/Components/TextareaInput'";
                     break;
                 case 'number':
-                    $fieldTemplate = "import NumberInput from '@/Shared/NumberInput'";
+                    $fieldTemplate = "import NumberInput from '@/Components/MyInput'";
                     break;
                 case 'checkbox':
-                    $fieldTemplate =  "import CheckboxInput from '@/Shared/CheckboxInput'";
+                    $fieldTemplate =  "import CheckboxInput from '@/Components/CheckboxInput'";
                     break;
                 case 'select':
                 case 'enum':
-                    $fieldTemplate = "import SelectInput from '@/Shared/SelectInput'";
+                    $fieldTemplate = "import SelectInput from '@/Components/SelectInput'";
                     break;
                 case 'toggle-switch':
-                    $fieldTemplate = "import ToggleInput from '@/Shared/ToggleInput'";
+                    $fieldTemplate = "import ToggleInput from '@/Components/ToggleInput'";
                     break;
             }
         }

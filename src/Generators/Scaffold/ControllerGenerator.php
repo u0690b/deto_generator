@@ -26,7 +26,7 @@ class ControllerGenerator extends BaseGenerator
         $this->commandData = $commandData;
         $this->path = $commandData->config->pathController;
         $this->templateType = config('deto.laravel_generator.templates', 'deto_generator');
-        $this->fileName = $this->commandData->modelName.'Controller.php';
+        $this->fileName = $this->commandData->modelName . 'Controller.php';
     }
 
     public function generate()
@@ -41,21 +41,21 @@ class ControllerGenerator extends BaseGenerator
         $this->commandData->commandComment("\nController created: ");
         $this->commandData->commandInfo($this->fileName);
     }
-    
-    private function generateFilterRelations():string
+
+    private function generateFilterRelations(): string
     {
         $relationWith = [];
         foreach ($this->commandData->relations as $relation) {
             $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
-            
-            if ($relation->type==='mt1') {
-                $singularRelation="";
-                if (! empty($relation->relationName)) {
+
+            if ($relation->type === 'mt1') {
+                $singularRelation = "";
+                if (!empty($relation->relationName)) {
                     $singularRelation = $relation->relationName;
                 } elseif (isset($relation->inputs[1])) {
                     $singularRelation = Str::snake(str_replace('_id', '', strtolower($relation->inputs[1])));
                 }
-                $relationWith[] ="->with('$singularRelation:id,name')";
+                $relationWith[] = "->with('$singularRelation:id,name')";
             }
         }
         return implode("", $relationWith);
@@ -64,10 +64,13 @@ class ControllerGenerator extends BaseGenerator
     {
         $resourceFields = [];
         foreach ($this->commandData->fields as $field) {
-            if (Str::endsWith($field->name, '_id')) {
-                $resourceFields[] = "'".Str::replaceLast('_id', '', $field->name)."'";
+            if (in_array($field->name, ['created_at', 'updated_at', 'deleted_at'])) {
+                continue;
             }
-            $resourceFields[] = "'".$field->name."'";
+            if (Str::endsWith($field->name, '_id')) {
+                $resourceFields[] = "'" . Str::replaceLast('_id', '', $field->name) . "'";
+            }
+            $resourceFields[] = "'" . $field->name . "'";
         }
 
         return $resourceFields;
@@ -75,15 +78,15 @@ class ControllerGenerator extends BaseGenerator
     public function rollback()
     {
         if ($this->rollbackFile($this->path, $this->fileName)) {
-            $this->commandData->commandComment('Controller file deleted: '.$this->fileName);
+            $this->commandData->commandComment('Controller file deleted: ' . $this->fileName);
         }
 
         if ($this->commandData->getAddOn('datatables')) {
             if ($this->rollbackFile(
                 $this->commandData->config->pathDataTables,
-                $this->commandData->modelName.'DataTable.php'
+                $this->commandData->modelName . 'DataTable.php'
             )) {
-                $this->commandData->commandComment('DataTable file deleted: '.$this->fileName);
+                $this->commandData->commandComment('DataTable file deleted: ' . $this->fileName);
             }
         }
     }

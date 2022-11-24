@@ -61,7 +61,9 @@ $PRIMARY$
                     continue;
                 }
                 if ($key === 'search') {
-                    $this->buildSearch($query, $filters['search']??'', $MODEL_NAME$::$searchIn);
+                    $this->buildSearch($query, $filters['search'] ?? '', $MODEL_NAME$::$searchIn);
+                } elseif (is_array($value)) {
+                    $query = $query->whereIn($key, $value);
                 } else {
                     $query->where($key, $value);
                 }

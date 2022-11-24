@@ -1,5 +1,5 @@
           <td class="border-t">
-            <inertia-link class="px-6 py-4 flex items-center focus:text-indigo-500" :href="route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.edit', $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$)">
+            <inertia-link :href="route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.edit', $MODEL_NAME_CAMEL$.$PRIMARY_KEY_NAME$)" class="px-6 py-4 flex items-center focus:text-indigo-500">
               {{ $MODEL_NAME_CAMEL$.$FIELD_NAME$ }}
             </inertia-link>
           </td>

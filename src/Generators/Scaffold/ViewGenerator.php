@@ -33,7 +33,7 @@ class ViewGenerator extends BaseGenerator
 
     public function generate()
     {
-        if (! file_exists($this->path)) {
+        if (!file_exists($this->path)) {
             mkdir($this->path, 0755, true);
         }
 
@@ -80,11 +80,12 @@ class ViewGenerator extends BaseGenerator
 
         $this->commandData->commandComment('Views created: ');
     }
-    
+
     private function generateTable()
     {
+
         $templateData = $this->generateBladeTableBody();
-       
+
         FileUtil::createFile($this->path, 'table.blade.php', $templateData);
 
         $this->commandData->commandInfo('table.blade.php created');
@@ -105,7 +106,7 @@ class ViewGenerator extends BaseGenerator
             $templateName .= '_locale';
         }
 
-        $templateData = get_template('scaffold.views.'.$templateName, $this->templateType);
+        $templateData = get_template('scaffold.views.' . $templateName, $this->templateType);
 
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
@@ -113,17 +114,17 @@ class ViewGenerator extends BaseGenerator
 
         $this->commandData->commandInfo('datatables_actions.blade.php created');
     }
-    
+
     private function generateFilter_Relation_Fields($templateData)
     {
         $bodyFields = [];
-        $filters=[];
+        $filters = [];
         $templateFieldData = get_template('scaffold.views.filter_field', $this->templateType);
-        $MY_SELECT_CMP="";
-        $MY_SELECT_IMPORT="";
-      
+        $MY_SELECT_CMP = "";
+        $MY_SELECT_IMPORT = "";
+
         foreach ($this->commandData->fields as $field) {
-            if (! Str::endsWith($field->name, '_id')) {
+            if (!Str::endsWith($field->name, '_id')) {
                 continue;
             }
             $filters[] = "$field->name: null,";
@@ -145,21 +146,21 @@ class ViewGenerator extends BaseGenerator
                 $field
             );
 
-            $MY_SELECT_IMPORT="import MySelect from '@/Shared/MySelect'";
+            $MY_SELECT_IMPORT = "import MySelect from '@/Components/MySelect'";
             $MY_SELECT_CMP = "MySelect,";
         }
-        
-        $templateData=str_replace('$MY_SELECT_CMP$', $MY_SELECT_CMP, $templateData);
-        $templateData=str_replace('$MY_SELECT_IMPORT$', $MY_SELECT_IMPORT, $templateData);
 
-        $templateData=str_replace('$FILTER_RELATION_FIELDS$', implode(infy_nl_tab(1, 2, 2), $filters), $templateData);
+        $templateData = str_replace('$MY_SELECT_CMP$', $MY_SELECT_CMP, $templateData);
+        $templateData = str_replace('$MY_SELECT_IMPORT$', $MY_SELECT_IMPORT, $templateData);
+
+        $templateData = str_replace('$FILTER_RELATION_FIELDS$', implode(infy_nl_tab(1, 2, 2), $filters), $templateData);
         return str_replace('$FILTER_RELATION_FIELDS_BODY$', implode("\n", $bodyFields), $templateData);
     }
     private function generateBladeTableBody($templateData)
     {
-        $templateName="blade_table_body";
+        $templateName = "blade_table_body";
         $tableFields = $this->generateTableHeaderFields();
-        
+
         // $templateData = get_template('scaffold.views.'.$templateName, $this->templateType);
 
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
@@ -167,17 +168,17 @@ class ViewGenerator extends BaseGenerator
         $templateData = str_replace('$FIELD_HEADERS$', $tableFields, $templateData);
 
         $cellFieldTemplate = get_template('scaffold.views.table_cell', $this->templateType);
-        $templateData=$this->generateFilter_Relation_Fields($templateData);
+        $templateData = $this->generateFilter_Relation_Fields($templateData);
 
         $tableBodyFields = [];
 
         foreach ($this->commandData->fields as $field) {
-            if (! $field->inIndex) {
+            if (!$field->inIndex) {
                 continue;
             }
             if (Str::endsWith($field->name, '_id')) {
-                $cellFieldTemplate1=str_replace('$FIELD_NAME$', Str::replaceLast('_id', '', $field->name).' ? $MODEL_NAME_CAMEL$.$FIELD_NAME$ : \'\'', $cellFieldTemplate);
-                $filledcellFieldTemplate=str_replace('$FIELD_NAME$', Str::replaceLast('_id', '.name', $field->name), $cellFieldTemplate1);
+                $cellFieldTemplate1 = str_replace('$FIELD_NAME$', Str::replaceLast('_id', '', $field->name) . ' ? $MODEL_NAME_CAMEL$.$FIELD_NAME$ : \'\'', $cellFieldTemplate);
+                $filledcellFieldTemplate = str_replace('$FIELD_NAME$', Str::replaceLast('_id', '.name', $field->name), $cellFieldTemplate1);
                 $tableBodyFields[] = fill_template_with_field_data(
                     $this->commandData->dynamicVars,
                     $this->commandData->fieldNamesMapping,
@@ -207,7 +208,7 @@ class ViewGenerator extends BaseGenerator
                 continue;
             }
 
-            $fields .= '<th scope="col">'.str_replace("'", '', $field->name).'</th>';
+            $fields .= '<th scope="col">' . str_replace("'", '', $field->name) . '</th>';
         }
 
         return $fields;
@@ -223,12 +224,12 @@ class ViewGenerator extends BaseGenerator
             $localized = true;
         }
 
-        $headerFieldTemplate = get_template('scaffold.views.'.$templateName, $this->templateType);
+        $headerFieldTemplate = get_template('scaffold.views.' . $templateName, $this->templateType);
 
         $headerFields = [];
 
         foreach ($this->commandData->fields as $field) {
-            if (! $field->inIndex) {
+            if (!$field->inIndex) {
                 continue;
             }
 
@@ -242,6 +243,8 @@ class ViewGenerator extends BaseGenerator
                  *
                  * @see issue https://github.com/DetoLabs/deto_generator/issues/887
                  */
+
+
                 $preFilledHeaderFieldTemplate = str_replace('$FIELD_NAME$', $field->name, $headerFieldTemplate);
 
                 $headerFields[] = $fieldTemplate = fill_template_with_field_data_locale(
@@ -271,7 +274,8 @@ class ViewGenerator extends BaseGenerator
             $templateName .= '_locale';
         }
 
-        $templateData = get_template('scaffold.views.'.$templateName, $this->templateType);
+        $templateData = get_template('scaffold.views.' . $templateName, $this->templateType);
+        $templateData = str_replace('$RESOURCE_FIELDS$', implode(',', $this->generateHeaderFields()), $templateData);
         $templateData = $this->generateBladeTableBody($templateData);
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
@@ -309,14 +313,14 @@ class ViewGenerator extends BaseGenerator
         $this->htmlFields = [];
 
         foreach ($this->commandData->fields as $field) {
-            if (! $field->inForm) {
+            if (!$field->inForm) {
                 continue;
             }
 
             $validations = explode('|', $field->validations);
             $minMaxRules = '';
             foreach ($validations as $validation) {
-                if (! Str::contains($validation, ['max:', 'min:'])) {
+                if (!Str::contains($validation, ['max:', 'min:'])) {
                     continue;
                 }
 
@@ -336,17 +340,17 @@ class ViewGenerator extends BaseGenerator
             $fieldTemplate = HTMLFieldGenerator::generateHTML($field, $this->templateType, $localized);
             if (Str::endsWith($field->name, '_id')) {
                 $fieldTemplate = get_template('scaffold.fields.my_select', $this->templateType);
-                if ($templateName=="create") {
-                    $fieldTemplate=str_replace('$FIELD_NAME_OBJECT$', 'null', $fieldTemplate);
+                if ($templateName == "create") {
+                    $fieldTemplate = str_replace('$FIELD_NAME_OBJECT$', 'null', $fieldTemplate);
                 } else {
-                    $fieldTemplate=str_replace('$FIELD_NAME_OBJECT$', "data.". Str::replaceLast('_id', '', $field->name), $fieldTemplate);
+                    $fieldTemplate = str_replace('$FIELD_NAME_OBJECT$', "data." . Str::replaceLast('_id', '', $field->name), $fieldTemplate);
                 }
             }
             if ($field->htmlType === 'selectTable') {
                 $inputArr = explode(',', $field->htmlValues[1]);
                 $columns = '';
                 foreach ($inputArr as $item) {
-                    $columns .= "'$item'".',';  //e.g 'email,id,'
+                    $columns .= "'$item'" . ',';  //e.g 'email,id,'
                 }
                 $columns = substr_replace($columns, '', -1); // remove last ,
 
@@ -359,16 +363,16 @@ class ViewGenerator extends BaseGenerator
 
                 $tableName = $this->commandData->config->tableName;
                 $viewPath = $this->commandData->config->prefixes['view'];
-                if (! empty($viewPath)) {
-                    $tableName = $viewPath.'.'.$tableName;
+                if (!empty($viewPath)) {
+                    $tableName = $viewPath . '.' . $tableName;
                 }
 
-                $variableName = Str::singular($selectTable).'Items'; // e.g $userItems
+                $variableName = Str::singular($selectTable) . 'Items'; // e.g $userItems
 
                 $fieldTemplate = $this->generateViewComposer($tableName, $variableName, $columns, $selectTable, $modalName);
             }
 
-            if (! empty($fieldTemplate)) {
+            if (!empty($fieldTemplate)) {
                 $fieldTemplate = fill_template_with_field_data(
                     $this->commandData->dynamicVars,
                     $this->commandData->fieldNamesMapping,
@@ -379,7 +383,7 @@ class ViewGenerator extends BaseGenerator
             }
         }
 
-        $templateData = get_template('scaffold.views.'.$templateName, $this->templateType);
+        $templateData = get_template('scaffold.views.' . $templateName, $this->templateType);
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
         $templateData = str_replace('$FIELDS$', implode("\n          ", $this->htmlFields), $templateData);
@@ -390,7 +394,7 @@ class ViewGenerator extends BaseGenerator
         );
         $templateData = str_replace(
             '$INIT_FORM_FIELDS$',
-            implode(','.infy_nl_tab(1, 2, 2), $this->generateInitResourceFields()),
+            implode(',' . infy_nl_tab(1, 2, 2), $this->generateInitResourceFields()),
             $templateData
         );
         $templateData = str_replace(
@@ -403,8 +407,8 @@ class ViewGenerator extends BaseGenerator
             implode(",\n    ", $this->generateComponent()),
             $templateData
         );
-        
-        FileUtil::createFile($this->path, ucfirst($templateName).'.vue', $templateData);
+
+        FileUtil::createFile($this->path, ucfirst($templateName) . '.vue', $templateData);
         $this->commandData->commandInfo('field.blade.php created');
     }
     private function generateImport()
@@ -421,14 +425,29 @@ class ViewGenerator extends BaseGenerator
         foreach ($this->commandData->fields as $field) {
             $resourceFields[] =    HTMLFieldGenerator::generateComponents($field);
         }
-        
+
         return array_unique($resourceFields);
+    }
+    private function generateHeaderFields()
+    {
+        $resourceFields = [];
+        foreach ($this->commandData->fields as $field) {
+            if (in_array($field->name, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
+                continue;
+            }
+            if (Str::endsWith($field->name, '_id')) {
+                $resourceFields[] = "'" . Str::replaceLast('_id', '', $field->name) . ".name'";
+            }
+            $resourceFields[] = "'" . $field->name . "'";
+        }
+
+        return $resourceFields;
     }
     private function generateResourceFields()
     {
         $resourceFields = [];
         foreach ($this->commandData->fields as $field) {
-            $resourceFields[] = "".$field->name.": this.data.".$field->name;
+            $resourceFields[] = "" . $field->name . ": this.data." . $field->name;
         }
 
         return $resourceFields;
@@ -437,12 +456,12 @@ class ViewGenerator extends BaseGenerator
     {
         $resourceFields = [];
         foreach ($this->commandData->fields as $field) {
-            $resourceFields[] = "".$field->name.": null";
+            $resourceFields[] = "" . $field->name . ": null";
         }
 
         return $resourceFields;
     }
-    
+
     private function generateViewComposer($tableName, $variableName, $columns, $selectTable, $modelName = null)
     {
         $templateName = 'scaffold.fields.select';
@@ -453,11 +472,11 @@ class ViewGenerator extends BaseGenerator
 
         $viewServiceProvider = new ViewServiceProviderGenerator($this->commandData);
         $viewServiceProvider->generate();
-        $viewServiceProvider->addViewVariables($tableName.'.fields', $variableName, $columns, $selectTable, $modelName);
+        $viewServiceProvider->addViewVariables($tableName . '.fields', $variableName, $columns, $selectTable, $modelName);
 
         $fieldTemplate = str_replace(
             '$INPUT_ARR$',
-            '$'.$variableName,
+            '$' . $variableName,
             $fieldTemplate
         );
 
@@ -469,7 +488,7 @@ class ViewGenerator extends BaseGenerator
         $templateName = 'create';
 
         $this->generateFields($templateName);
-        
+
         $this->commandData->commandInfo('create.blade.php created');
     }
 
@@ -478,7 +497,7 @@ class ViewGenerator extends BaseGenerator
         $templateName = 'edit';
 
         $this->generateFields($templateName);
-      
+
         $this->commandData->commandInfo('edit.blade.php created');
     }
 
@@ -488,12 +507,12 @@ class ViewGenerator extends BaseGenerator
         if ($this->commandData->isLocalizedTemplates()) {
             $templateName .= '_locale';
         }
-        $fieldTemplate = get_template('scaffold.views.'.$templateName, $this->templateType);
+        $fieldTemplate = get_template('scaffold.views.' . $templateName, $this->templateType);
 
         $fieldsStr = '';
 
         foreach ($this->commandData->fields as $field) {
-            if (! $field->inView) {
+            if (!$field->inView) {
                 continue;
             }
             $singleFieldStr = str_replace(
@@ -504,7 +523,7 @@ class ViewGenerator extends BaseGenerator
             $singleFieldStr = str_replace('$FIELD_NAME$', $field->name, $singleFieldStr);
             $singleFieldStr = fill_template($this->commandData->dynamicVars, $singleFieldStr);
 
-            $fieldsStr .= $singleFieldStr."\n\n";
+            $fieldsStr .= $singleFieldStr . "\n\n";
         }
 
         FileUtil::createFile($this->path, 'show_fields.blade.php', $fieldsStr);
@@ -519,7 +538,7 @@ class ViewGenerator extends BaseGenerator
             $templateName .= '_locale';
         }
 
-        $templateData = get_template('scaffold.views.'.$templateName, $this->templateType);
+        $templateData = get_template('scaffold.views.' . $templateName, $this->templateType);
 
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
@@ -539,10 +558,10 @@ class ViewGenerator extends BaseGenerator
             'show_fields.blade.php',
         ];
 
-        if (! empty($views)) {
+        if (!empty($views)) {
             $files = [];
             foreach ($views as $view) {
-                $files[] = $view.'.blade.php';
+                $files[] = $view . '.blade.php';
             }
         }
 
@@ -552,7 +571,7 @@ class ViewGenerator extends BaseGenerator
 
         foreach ($files as $file) {
             if ($this->rollbackFile($this->path, $file)) {
-                $this->commandData->commandComment($file.' file deleted');
+                $this->commandData->commandComment($file . ' file deleted');
             }
         }
     }

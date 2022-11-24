@@ -22,9 +22,11 @@ class $MODEL_NAME$Controller extends Controller
         if (Request::has('only')) {
             return json_encode($$MODEL_NAME_PLURAL_CAMEL$->only('$PRIMARY_KEY_NAME$', 'name'));
         }
-        return Inertia::render('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/Index', [
+        return Inertia::render('$VIEW_PREFIX1$$MODEL_NAME_PLURAL_SNAKE$/Index', [
             'filters' => Request::only(["search", ...$MODEL_NAME$::$searchIn]),
-            '$MODEL_NAME_PLURAL_CAMEL$' => $$MODEL_NAME_PLURAL_CAMEL$,
+            'datas' => $$MODEL_NAME_PLURAL_CAMEL$
+                ->withQueryString()
+                ->through(fn ($row) => $row->only($RESOURCE_FIELDS$)),
             'host' => config('app.url'),
         ]);
     }
@@ -36,7 +38,7 @@ class $MODEL_NAME$Controller extends Controller
      */
     public function create()
     {
-        return Inertia::render('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/Create', ['host' => config('app.url')]);
+        return Inertia::render('$VIEW_PREFIX1$$MODEL_NAME_PLURAL_SNAKE$/Create', ['host' => config('app.url')]);
     }
 
     /**
@@ -59,8 +61,8 @@ class $MODEL_NAME$Controller extends Controller
      */
     public function edit($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
-        return Inertia::render('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$/Edit', [
-            'data' =>  $$MODEL_NAME_CAMEL$->only($RESOURCE_FIELDS$),
+        return Inertia::render('$VIEW_PREFIX1$$MODEL_NAME_PLURAL_SNAKE$/Edit', [
+            'data' =>  $$MODEL_NAME_CAMEL$,
             'host' => config('app.url'),
         ]);
     }

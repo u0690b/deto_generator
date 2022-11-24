@@ -1,1 +1,1 @@
-        <my-select v-model="form.$FIELD_NAME$" :url="`${host}/$FILTER_RELATION_MODEL_NAME_SNAKE$`" />
+        <my-select v-model="form.$FIELD_NAME$" label="$FIELD_NAME_TITLE$" :url="`${host}/$FILTER_RELATION_MODEL_NAME_SNAKE$`" />

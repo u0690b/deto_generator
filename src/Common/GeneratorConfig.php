@@ -137,19 +137,19 @@ class GeneratorConfig
         $prefix = $this->prefixes['ns'];
 
         if (!empty($prefix)) {
-            $prefix = '\\'.$prefix;
+            $prefix = '\\' . $prefix;
         }
 
         $this->nsApp = $commandData->commandObj->getLaravel()->getNamespace();
         $this->nsApp = substr($this->nsApp, 0, strlen($this->nsApp) - 1);
-        $this->nsRepository = config('deto.laravel_generator.namespace.repository', 'App\Repositories').$prefix;
-        $this->nsModel = config('deto.laravel_generator.namespace.model', 'App\Models').$prefix;
+        $this->nsRepository = config('deto.laravel_generator.namespace.repository', 'App\Repositories') . $prefix;
+        $this->nsModel = config('deto.laravel_generator.namespace.model', 'App\Models') . $prefix;
         if (config('deto.laravel_generator.ignore_model_prefix', false)) {
             $this->nsModel = config('deto.laravel_generator.namespace.model', 'App\Models');
         }
-        $this->nsSeeder = config('deto.laravel_generator.namespace.seeder', 'Database\Seeders').$prefix;
-        $this->nsFactory = config('deto.laravel_generator.namespace.factory', 'Database\Factories').$prefix;
-        $this->nsDataTables = config('deto.laravel_generator.namespace.datatables', 'App\DataTables').$prefix;
+        $this->nsSeeder = config('deto.laravel_generator.namespace.seeder', 'Database\Seeders') . $prefix;
+        $this->nsFactory = config('deto.laravel_generator.namespace.factory', 'Database\Factories') . $prefix;
+        $this->nsDataTables = config('deto.laravel_generator.namespace.datatables', 'App\DataTables') . $prefix;
         $this->nsModelExtend = config(
             'deto.laravel_generator.model_extend_class',
             'Illuminate\Database\Eloquent\Model'
@@ -158,17 +158,17 @@ class GeneratorConfig
         $this->nsApiController = config(
             'deto.laravel_generator.namespace.api_controller',
             'App\Http\Controllers\API'
-        ).$prefix;
+        ) . $prefix;
         $this->nsApiResource = config(
             'deto.laravel_generator.namespace.api_resource',
             'App\Http\Resources'
-        ).$prefix;
-        $this->nsApiRequest = config('deto.laravel_generator.namespace.api_request', 'App\Http\Requests\API').$prefix;
+        ) . $prefix;
+        $this->nsApiRequest = config('deto.laravel_generator.namespace.api_request', 'App\Http\Requests\API') . $prefix;
 
-        $this->nsRequest = config('deto.laravel_generator.namespace.request', 'App\Http\Requests').$prefix;
+        $this->nsRequest = config('deto.laravel_generator.namespace.request', 'App\Http\Requests') . $prefix;
         $this->nsRequestBase = config('deto.laravel_generator.namespace.request', 'App\Http\Requests');
         $this->nsBaseController = config('deto.laravel_generator.namespace.controller', 'App\Http\Controllers');
-        $this->nsController = config('deto.laravel_generator.namespace.controller', 'App\Http\Controllers').$prefix;
+        $this->nsController = config('deto.laravel_generator.namespace.controller', 'App\Http\Controllers') . $prefix;
 
         $this->nsApiTests = config('deto.laravel_generator.namespace.api_test', 'Tests\APIs');
         $this->nsRepositoryTests = config('deto.laravel_generator.namespace.repository_test', 'Tests\Repositories');
@@ -192,29 +192,29 @@ class GeneratorConfig
         $this->pathRepository = config(
             'deto.laravel_generator.path.repository',
             app_path('Repositories/')
-        ).$prefix;
+        ) . $prefix;
 
-        $this->pathModel = config('deto.laravel_generator.path.model', app_path('Models/')).$prefix;
+        $this->pathModel = config('deto.laravel_generator.path.model', app_path('Models/')) . $prefix;
         if (config('deto.laravel_generator.ignore_model_prefix', false)) {
             $this->pathModel = config('deto.laravel_generator.path.model', app_path('Models/'));
         }
 
-        $this->pathDataTables = config('deto.laravel_generator.path.datatables', app_path('DataTables/')).$prefix;
+        $this->pathDataTables = config('deto.laravel_generator.path.datatables', app_path('DataTables/')) . $prefix;
 
         $this->pathApiController = config(
             'deto.laravel_generator.path.api_controller',
             app_path('Http/Controllers/API/')
-        ).$prefix;
+        ) . $prefix;
 
         $this->pathApiResource = config(
             'deto.laravel_generator.path.api_resource',
             app_path('Http/Resources/')
-        ).$prefix;
+        ) . $prefix;
 
         $this->pathApiRequest = config(
             'deto.laravel_generator.path.api_request',
             app_path('Http/Requests/API/')
-        ).$prefix;
+        ) . $prefix;
 
         $this->pathApiRoutes = config('deto.laravel_generator.path.api_routes', base_path('routes/api.php'));
 
@@ -223,9 +223,9 @@ class GeneratorConfig
         $this->pathController = config(
             'deto.laravel_generator.path.controller',
             app_path('Http/Controllers/')
-        ).$prefix;
+        ) . $prefix;
 
-        $this->pathRequest = config('deto.laravel_generator.path.request', app_path('Http/Requests/')).$prefix;
+        $this->pathRequest = config('deto.laravel_generator.path.request', app_path('Http/Requests/')) . $prefix;
 
         $this->pathRoutes = config('deto.laravel_generator.path.routes', base_path('routes/web.php'));
         $this->pathFactory = config('deto.laravel_generator.path.factory', database_path('factories/'));
@@ -233,7 +233,7 @@ class GeneratorConfig
         $this->pathViews = config(
             'deto.laravel_generator.path.views',
             resource_path('js/Pages/')
-        ).$viewPrefix.$this->mSnakePlural.'/';
+        ) . $viewPrefix . $this->mSnakePlural . '/';
 
         $this->pathAssets = config(
             'deto.laravel_generator.path.assets',
@@ -298,13 +298,13 @@ class GeneratorConfig
         $connectionText = '';
         if ($connection = $this->getOption('connection')) {
             $this->connection = $connection;
-            $connectionText = infy_tab(4).'public $connection = "'.$connection.'";';
+            $connectionText = infy_tab(4) . 'public $connection = "' . $connection . '";';
         }
         $commandData->addDynamicVariable('$CONNECTION$', $connectionText);
 
         if (!empty($this->prefixes['route'])) {
-            $commandData->addDynamicVariable('$ROUTE_NAMED_PREFIX$', $this->prefixes['route'].'.');
-            $commandData->addDynamicVariable('$ROUTE_PREFIX$', str_replace('.', '/', $this->prefixes['route']).'/');
+            $commandData->addDynamicVariable('$ROUTE_NAMED_PREFIX$', $this->prefixes['route'] . '.');
+            $commandData->addDynamicVariable('$ROUTE_PREFIX$', str_replace('.', '/', $this->prefixes['route']) . '/');
             $commandData->addDynamicVariable('$RAW_ROUTE_PREFIX$', $this->prefixes['route']);
         } else {
             $commandData->addDynamicVariable('$ROUTE_PREFIX$', '');
@@ -312,17 +312,22 @@ class GeneratorConfig
         }
 
         if (!empty($this->prefixes['ns'])) {
-            $commandData->addDynamicVariable('$PATH_PREFIX$', $this->prefixes['ns'].'\\');
+            $commandData->addDynamicVariable('$PATH_PREFIX$', $this->prefixes['ns'] . '\\');
         } else {
             $commandData->addDynamicVariable('$PATH_PREFIX$', '');
         }
 
         if (!empty($this->prefixes['view'])) {
-            $commandData->addDynamicVariable('$VIEW_PREFIX$', str_replace('/', '.', $this->prefixes['view']).'.');
+            $commandData->addDynamicVariable('$VIEW_PREFIX$', str_replace('/', '.', $this->prefixes['view']) . '.');
         } else {
             $commandData->addDynamicVariable('$VIEW_PREFIX$', '');
         }
-
+        if (!empty($this->prefixes['view'])) {
+            $commandData->addDynamicVariable('$VIEW_PREFIX1$', $this->prefixes['view'] . '/');
+            $commandData->addDynamicVariable('$VIEW_PREFIX_LOWER$', strtolower($this->prefixes['view']) . '.');
+        } else {
+            $commandData->addDynamicVariable('$VIEW_PREFIX1$', '');
+        }
         if (!empty($this->prefixes['public'])) {
             $commandData->addDynamicVariable('$PUBLIC_PREFIX$', $this->prefixes['public']);
         } else {
@@ -446,7 +451,7 @@ class GeneratorConfig
         $routePrefix = '';
 
         foreach ($this->prefixes['route'] as $singlePrefix) {
-            $routePrefix .= Str::camel($singlePrefix).'.';
+            $routePrefix .= Str::camel($singlePrefix) . '.';
         }
 
         if (!empty($routePrefix)) {
@@ -458,7 +463,7 @@ class GeneratorConfig
         $nsPrefix = '';
 
         foreach ($this->prefixes['path'] as $singlePrefix) {
-            $nsPrefix .= Str::title($singlePrefix).'\\';
+            $nsPrefix .= Str::title($singlePrefix) . '\\';
         }
 
         if (!empty($nsPrefix)) {
@@ -470,7 +475,7 @@ class GeneratorConfig
         $pathPrefix = '';
 
         foreach ($this->prefixes['path'] as $singlePrefix) {
-            $pathPrefix .= Str::title($singlePrefix).'/';
+            $pathPrefix .= Str::title($singlePrefix) . '/';
         }
 
         if (!empty($pathPrefix)) {
@@ -482,7 +487,7 @@ class GeneratorConfig
         $viewPrefix = '';
 
         foreach ($this->prefixes['view'] as $singlePrefix) {
-            $viewPrefix .= Str::camel($singlePrefix).'/';
+            $viewPrefix .= $singlePrefix . '/';
         }
 
         if (!empty($viewPrefix)) {
@@ -494,7 +499,7 @@ class GeneratorConfig
         $publicPrefix = '';
 
         foreach ($this->prefixes['public'] as $singlePrefix) {
-            $publicPrefix .= Str::camel($singlePrefix).'/';
+            $publicPrefix .= Str::camel($singlePrefix) . '/';
         }
 
         if (!empty($publicPrefix)) {

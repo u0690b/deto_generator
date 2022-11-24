@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="mb-8 font-bold text-3xl">
-      <inertia-link class="text-indigo-400 hover:text-indigo-600" :href="route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')">$MODEL_NAME_PLURAL_HUMAN$</inertia-link>
+      <inertia-link class="text-indigo-400 hover:text-indigo-600" :href="route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.index')">$MODEL_NAME_PLURAL_HUMAN$</inertia-link>
       <span class="text-indigo-400 font-medium">/</span> Create
     </h1>
     <div class="bg-white rounded shadow overflow-hidden max-w-3xl">
@@ -10,7 +10,7 @@
           $FIELDS$
         </div>
         <div class="px-8 py-4 bg-gray-100 border-t border-gray-200 flex justify-end items-center">
-          <loading-button :loading="sending" class="btn-indigo" type="submit">Create $MODEL_NAME_PLURAL_HUMAN$</loading-button>
+          <loading-button :loading="form.processing" class="btn-indigo" type="submit">Create $MODEL_NAME_PLURAL_HUMAN$</loading-button>
         </div>
       </form>
     </div>
@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import Layout from '@/Shared/Layout'
-import LoadingButton from '@/Shared/LoadingButton'
+import Layout from '@/Layouts/Admin'
+import LoadingButton from '@/Components/LoadingButton'
 $IMPORT_INPUT$
 
 export default {
@@ -34,10 +34,8 @@ export default {
     data:Object,
     host: String,
   },
-  remember: 'form',
   data() {
     return {
-      sending: false,
       form: this.$inertia.form({
         $INIT_FORM_FIELDS$,
       }),
@@ -45,10 +43,7 @@ export default {
   },
   methods: {
     submit() {
-      this.form.post(this.route('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.store'), {
-        onStart: () => this.sending = true,
-        onFinish: () => this.sending = false,
-      })
+      this.form.post(this.route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.store'))
     },
   },
 }
