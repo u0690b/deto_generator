@@ -1,1 +1,1 @@
-<MyInput v-model="form.$FIELD_NAME$" type="radio" :error="errors.$FIELD_NAME$" class="pr-6 pb-8 w-full lg:w-1/2" label="$FIELD_NAME_TITLE$" />
+<MyInput v-model="form.$FIELD_NAME$" type="radio" :error="errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" />

@@ -2,8 +2,7 @@
 
 namespace $NAMESPACE_API_CONTROLLER$;
 
-use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
-use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
+
 use $NAMESPACE_MODEL$\$MODEL_NAME$;
 use Illuminate\Http\Request;
 use $NAMESPACE_APP$\Http\Controllers\AppBaseController;
@@ -15,7 +14,7 @@ class $MODEL_NAME$APIController extends AppBaseController
     $DOC_INDEX$
     public function index(Request $request)
     {
-        $query = $MODEL_NAME$::query();
+        $query = $MODEL_NAME$::filter( $request->all(["search", ...$MODEL_NAME$::$searchIn]))$FILTER_RELATION_WITH$;
 
         if ($request->get('skip')) {
             $query->skip($request->get('skip'));
@@ -26,18 +25,18 @@ class $MODEL_NAME$APIController extends AppBaseController
 
         $$MODEL_NAME_PLURAL_CAMEL$ = $query->get();
 
-        return $this->sendResponse($$MODEL_NAME_PLURAL_CAMEL$->toArray(), '$MODEL_NAME_PLURAL_HUMAN$ retrieved successfully');
+        return $$MODEL_NAME_PLURAL_CAMEL$->toJson();
     }
 
     $DOC_STORE$
-    public function store(Create$MODEL_NAME$APIRequest $request)
+    public function store(Request $request)
     {
-        $input = $request->all();
+        $input = $request->validate($MODEL_NAME$::$rules);
 
         /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::create($input);
 
-        return $this->sendResponse($$MODEL_NAME_CAMEL$->toArray(), '$MODEL_NAME_HUMAN$ saved successfully');
+        return $$MODEL_NAME_CAMEL$->toJson();
     }
 
     $DOC_SHOW$
@@ -50,12 +49,13 @@ class $MODEL_NAME$APIController extends AppBaseController
             return $this->sendError('$MODEL_NAME_HUMAN$ not found');
         }
 
-        return $this->sendResponse($$MODEL_NAME_CAMEL$->toArray(), '$MODEL_NAME_HUMAN$ retrieved successfully');
+        return $$MODEL_NAME_CAMEL$->toJson();
     }
 
     $DOC_UPDATE$
-    public function update($id, Update$MODEL_NAME$APIRequest $request)
+    public function update($id, Request $request)
     {
+        $input = $request->validate($MODEL_NAME$::$rules);
         /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
         $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::find($id);
 
@@ -63,10 +63,10 @@ class $MODEL_NAME$APIController extends AppBaseController
             return $this->sendError('$MODEL_NAME_HUMAN$ not found');
         }
 
-        $$MODEL_NAME_CAMEL$->fill($request->all());
+        $$MODEL_NAME_CAMEL$->fill($input);
         $$MODEL_NAME_CAMEL$->save();
 
-        return $this->sendResponse($$MODEL_NAME_CAMEL$->toArray(), '$MODEL_NAME$ updated successfully');
+        return $$MODEL_NAME_CAMEL$->toJson();
     }
 
     $DOC_DESTROY$
