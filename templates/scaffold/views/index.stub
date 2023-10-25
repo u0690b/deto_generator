@@ -1,20 +1,21 @@
 <template>
+  <HeadTitle title="$MODEL_NAME_PLURAL_HUMAN$"/>
   <div>
-    <h1 class="mb-8 font-bold text-3xl">$MODEL_NAME_PLURAL_HUMAN$</h1>
+    <h1 class="mb-8 font-bold text-xl">$MODEL_NAME_PLURAL_HUMAN$</h1>
     <div class="mb-6 flex justify-between items-center">
-      <search-filter v-model="form.search" class="w-full max-w-md mr-4" @reset="reset">
+      <SearchFilter v-model="form.search" class="w-full  mr-4" @reset="reset">
 $FILTER_RELATION_FIELDS_BODY$
-      </search-filter>
-      <inertia-link class="btn-indigo" :href="route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.create')">
-        <span>Create</span>
-        <span class="hidden md:inline">$MODEL_NAME_PLURAL_HUMAN$</span>
-      </inertia-link>
+      </SearchFilter>
+      <InertiaLink class="btn-indigo" :href="route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.create')">
+        Үүсгэх
+      </InertiaLink>
     </div>
-    <div class="bg-white rounded shadow overflow-x-auto">
-      <admin-table :headers="{$RESOURCE_FIELDS$}" :datas="datas" url="$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.edit"/>
-      
+    <div class="bg-white rounded shadow">
+      <PaginationFilter v-model="form.per_page" :total="datas.total" />
+      <AdminTable :headers="{$RESOURCE_FIELDS$}" :datas="datas" url="$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.edit"/>
+
     </div>
-    <pagination :links="datas.links" />
+    <Pagination :links="datas.links" />
   </div>
 </template>
 
@@ -26,14 +27,19 @@ import pickBy from 'lodash/pickBy'
 import SearchFilter from '@/Components/SearchFilter.vue'
 import debounce from 'lodash/debounce'
 import AdminTable from '@/Components/AdminTable.vue'
+import { Head as HeadTitle } from '@inertiajs/vue3'
+import PaginationFilter from '@/Components/PaginationFilter.vue'
+
 $MY_SELECT_IMPORT$
 export default {
-  metaInfo: { title: '$MODEL_NAME_PLURAL_HUMAN$' },
   components: {
     Pagination,
     SearchFilter,
     AdminTable,
+    HeadTitle,
+    PaginationFilter,
     $MY_SELECT_CMP$
+    
   },
   layout: Layout,
   props: {

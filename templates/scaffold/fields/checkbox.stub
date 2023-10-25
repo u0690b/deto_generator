@@ -1,1 +1,1 @@
-<checkbox-input v-model="form.$FIELD_NAME$" type="checkbox" :error="errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" />
+<checkbox-input v-model="form.$FIELD_NAME$" type="checkbox" :error="form.errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" />

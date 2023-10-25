@@ -52,9 +52,9 @@ class ViewGenerator extends BaseGenerator
                 $this->generateIndex();
             }
 
-            // if (count(array_intersect(['create', 'update'], $viewsToBeGenerated)) > 0) {
-            //     $this->generateFields();
-            // }
+            //if (count(array_intersect(['create', 'update'], $viewsToBeGenerated)) > 0) {
+            //$this->generateFields('fields');
+            //}
 
             if (in_array('create', $viewsToBeGenerated)) {
                 $this->generateCreate();
@@ -64,18 +64,18 @@ class ViewGenerator extends BaseGenerator
                 $this->generateUpdate();
             }
 
-            // if (in_array('show', $viewsToBeGenerated)) {
-            //     $this->generateShowFields();
-            //     $this->generateShow();
-            // }
+            if (in_array('show', $viewsToBeGenerated)) {
+                $this->generateShowFields();
+                $this->generateShow();
+            }
         } else {
             // $this->generateTable();
             $this->generateIndex();
-            // $this->generateFields();
+            $this->generateFields('fields');
             $this->generateCreate();
             $this->generateUpdate();
-            // $this->generateShowFields();
-            // $this->generateShow();
+            $this->generateShowFields();
+            $this->generateShow();
         }
 
         $this->commandData->commandComment('Views created: ');
@@ -400,6 +400,11 @@ class ViewGenerator extends BaseGenerator
             $templateData
         );
         $templateData = str_replace(
+            '$INIT_COMPUTE_FIELDS$',
+            implode('' . infy_nl_tab(1, 0, 0), $this->generateComputeResourceFields()),
+            $templateData
+        );
+        $templateData = str_replace(
             '$IMPORT_INPUT$',
             implode("\n", $this->generateImport()),
             $templateData
@@ -454,11 +459,24 @@ class ViewGenerator extends BaseGenerator
 
         return $resourceFields;
     }
+
+
+
     private function generateInitResourceFields()
     {
         $resourceFields = [];
         foreach ($this->commandData->fields as $field) {
             $resourceFields[] = "" . $field->name . ": null";
+        }
+
+        return $resourceFields;
+    }
+
+    private function generateComputeResourceFields()
+    {
+        $resourceFields = [];
+        foreach ($this->commandData->fields as $field) {
+            $resourceFields[] = "const v_" . $field->name . " = computed({get:() => props.$field->name,set:(value)=> emit('update:$field->name')})";
         }
 
         return $resourceFields;

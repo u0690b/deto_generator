@@ -1,7 +1,16 @@
-$FIELDS$
+<template>
+  $FIELDS$
+</template>
 
-<!-- Submit Field -->
-<div class="form-group col-sm-12">
-    {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
-    <a href="{{ route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index') }}" class="btn btn-default">Cancel</a>
-</div>
+<script setup>
+import { ref } from 'vue'
+import MySelect from './MySelect.vue'
+import { computed } from 'vue'
+
+const emit = defineEmits([
+    $EMIT_FIELDS$
+])
+
+$INIT_COMPUTE_FIELDS$
+
+</script>

@@ -52,8 +52,8 @@ class MenuGenerator extends BaseGenerator
             return;
         }
         $this->menuContents = str_replace(
-            "</div>\n</template>",
-            $this->menuTemplate . infy_nl() . "  </div>\n</template>",
+            "// admin_menu",
+            $this->menuTemplate . infy_nl() . " \n // admin_menu",
             $this->menuContents
         );
         file_put_contents($this->path, $this->menuContents);

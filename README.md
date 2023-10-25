@@ -1,3 +1,3 @@
 # deto_generator
-laravel generate clone infyom
 
+laravel generate clone infyom

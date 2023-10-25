@@ -1,1 +1,1 @@
-<MySelect :value="$FIELD_NAME_OBJECT$" type="text" :error="errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" :url="`/admin/$FILTER_RELATION_MODEL_NAME_SNAKE$`" @changeId="id=>form.$FIELD_NAME$=id" />
+<MySelect :value="$FIELD_NAME_OBJECT$" type="text" :error="form.errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" :url="`/admin/$FILTER_RELATION_MODEL_NAME_SNAKE$`" @changeId="id=>form.$FIELD_NAME$=id" />

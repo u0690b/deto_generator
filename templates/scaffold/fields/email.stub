@@ -1,1 +1,1 @@
-<MyInput v-model="form.$FIELD_NAME$" type="email" :error="errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" autofocus autocapitalize="off" />
+<MyInput v-model="form.$FIELD_NAME$" type="email" :error="form.errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" autofocus autocapitalize="off" />
