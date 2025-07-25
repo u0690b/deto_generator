@@ -59,6 +59,4 @@ $PRIMARY$
     {
         return $MODEL_NAME$::$searchIn;
     }
-
-   
 }

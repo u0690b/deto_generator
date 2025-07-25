@@ -88,7 +88,7 @@ class HTMLFieldGenerator
                     $fieldTemplate = "import TextareaInput from '@/Components/TextareaInput.vue'";
                     break;
                 case 'number':
-                    $fieldTemplate = "import NumberInput from '@/Components/MyInput.vue'";
+                    $fieldTemplate = "import MyInput from '@/Components/MyInput.vue'";
                     break;
                 case 'checkbox':
                     $fieldTemplate =  "import CheckboxInput from '@/Components/CheckboxInput.vue'";
@@ -128,7 +128,7 @@ class HTMLFieldGenerator
                     $fieldTemplate = "CheckboxInput";
                     break;
                 case 'number':
-                    $fieldTemplate = "NumberInput";
+                    $fieldTemplate = "MyInput";
                     break;
                 case 'select':
                 case 'enum':

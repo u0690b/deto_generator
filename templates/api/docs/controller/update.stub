@@ -4,5 +4,5 @@
      *
      * @param $MODEL_NAME$ $$MODEL_NAME_PLURAL_CAMEL$
      *
-     * @return Response
+     * @return \Inertia\Response|Response|string|bool
      */

@@ -1,1 +1,1 @@
-<number-input v-model="form.$FIELD_NAME$" type="number" :error="form.errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" />
+<MyInput v-model="form.$FIELD_NAME$" type="number" :error="form.errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" />

@@ -1,19 +1,32 @@
-@extends('layouts.app')
-
-@section('content')
-    <section class="content-header">
-        <h1>
-            $MODEL_NAME_HUMAN$
-        </h1>
-    </section>
-    <div class="content">
-        <div class="box box-primary">
-            <div class="box-body">
-                <div class="row" style="padding-left: 20px">
-                    @include('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.show_fields')
-                    <a href="{{ route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index') }}" class="btn btn-default">Back</a>
-                </div>
-            </div>
-        </div>
+<template>
+  <Layout :title="title">
+    <div>
+      <h1>
+        <BackButton href="/admin/$MODEL_NAME_PLURAL_SNAKE$" />{{ title }}
+        <ILink class="float-right ml-4 btn btn-warning" :href="`/admin/$MODEL_NAME_PLURAL_SNAKE$/${data.id}/edit`">Засах</ILink>
+        <DestroyButton :href="'/admin/$MODEL_NAME_PLURAL_SNAKE$/' + props.data.id" class="float-right">Устгах</DestroyButton>
+      </h1>
+      <div class="show-grid">
+        <InputLabel v-for="item in fields" :key="item.label" v-bind="item" class="border-b border-dashed" />
+      </div>
     </div>
-@endsection
+  </Layout>
+</template>
+
+<script setup>
+import Layout from '@/Layouts/AdminLayout.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import BackButton from '@/Components/BackButton.vue';
+import DestroyButton from '@/Components/DestroyButton.vue';
+
+const props = defineProps({
+  data: [Object],
+});
+
+const title = '$MODEL_NAME_PLURAL_HUMAN$ дэлгэрэнгүй'
+
+const fields = [
+  $SHOW_FIELD$
+]
+
+</script>

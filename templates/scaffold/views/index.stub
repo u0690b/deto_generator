@@ -1,72 +1,46 @@
 <template>
-  <HeadTitle title="$MODEL_NAME_PLURAL_HUMAN$"/>
-  <div>
-    <h1 class="mb-8 font-bold text-xl">$MODEL_NAME_PLURAL_HUMAN$</h1>
-    <div class="mb-6 flex justify-between items-center">
-      <SearchFilter v-model="form.search" class="w-full  mr-4" @reset="reset">
-$FILTER_RELATION_FIELDS_BODY$
-      </SearchFilter>
-      <InertiaLink class="btn-indigo" :href="route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.create')">
-        Үүсгэх
-      </InertiaLink>
+  <Layout :title="title">
+    <div>
+      <div class="p-4 bg-white rounded shadow">
+        <h1 class="pb-4 mb-6 text-xl font-bold border-b">{{ title }}</h1>
+        <PaginationFilter v-model="form.model.per_page" v-model:search="form.model.search" :total="datas.total" />
+        <AdminTable :headers="headers" :datas="datas" url="/admin/$MODEL_NAME_PLURAL_SNAKE$" @order-by="(v) => orderBy(form, v)">
+          <template #filter>
+             <AdminTableFilter v-model:model="form.model" :headers="headers" />
+          </template>
+        </AdminTable>
+        <Pagination :links="datas.links" />
+      </div>
     </div>
-    <div class="bg-white rounded shadow">
-      <PaginationFilter v-model="form.per_page" :total="datas.total" />
-      <AdminTable :headers="{$RESOURCE_FIELDS$}" :datas="datas" url="$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.edit"/>
-
-    </div>
-    <Pagination :links="datas.links" />
-  </div>
+  </Layout>
 </template>
 
-<script>
-import Layout from '@/Layouts/Admin.vue'
-import mapValues from 'lodash/mapValues'
+<script setup>
+import Layout from '@/Layouts/AdminLayout.vue'
 import Pagination from '@/Components/Pagination.vue'
-import pickBy from 'lodash/pickBy'
-import SearchFilter from '@/Components/SearchFilter.vue'
-import debounce from 'lodash/debounce'
 import AdminTable from '@/Components/AdminTable.vue'
-import { Head as HeadTitle } from '@inertiajs/vue3'
+import AdminTableFilter from '@/Components/AdminTableFilter.vue'
+import { useForm } from '@inertiajs/vue3'
+import { watch } from 'vue'
 import PaginationFilter from '@/Components/PaginationFilter.vue'
+import { debounce } from '@/utils/useDebouncedRef'
+import orderBy from '@/utils/orderBy'
+import MySelect from '@/Components/MySelect.vue'
+import MyInput from '@/Components/MyInput.vue'
 
-$MY_SELECT_IMPORT$
-export default {
-  components: {
-    Pagination,
-    SearchFilter,
-    AdminTable,
-    HeadTitle,
-    PaginationFilter,
-    $MY_SELECT_CMP$
-    
-  },
-  layout: Layout,
-  props: {
-    datas: Object,
-    filters: [Object,Array],
-    host: String,
-  },
-  data() {
-    return {
-      form: {
-        $FILTER_RELATION_FIELDS$
-        ...this.filters?this.filters:{},
-      },
-    }
-  },
-  watch: {
-    form: {
-      handler: debounce(function() {
-        this.$inertia.get(this.route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.index'), pickBy(this.form), { preserveState: true })
-      }, 150),
-      deep: true,
-    },
-  },
-  methods: {
-    reset() {
-      this.form = mapValues(this.form, () => null)
-    },
-  },
-}
+const props = defineProps({
+  datas: Object,
+  filters: { type: Object, default: () => ({ search: '' }) },
+});
+
+const title = '$MODEL_NAME_PLURAL_HUMAN$ жагсаалт'
+
+const headers = [$RESOURCE_FIELDS$
+]
+
+const form = useForm({ model: { ...props.filters, per_page: props.datas.per_page } })
+  .transform(data => data.model)
+
+watch(() => form.model, debounce(() => form.get('', { preserveState: true }), 150), { deep: true })
+
 </script>

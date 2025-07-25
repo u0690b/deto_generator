@@ -37,6 +37,7 @@ class ControllerGenerator extends BaseGenerator
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
         $templateData = str_replace('$RESOURCE_FIELDS$', implode(',', $this->generateResourceFields()), $templateData);
         $templateData = str_replace('$FILTER_RELATION_WITH$', $this->generateFilterRelations(), $templateData);
+        $templateData = str_replace('$LOAD_RELATION_WITH$', $this->generateLoadRelations(), $templateData);
         FileUtil::createFile($this->path, $this->fileName, $templateData);
         $this->commandData->commandComment("\nController created: ");
         $this->commandData->commandInfo($this->fileName);
@@ -60,6 +61,24 @@ class ControllerGenerator extends BaseGenerator
         }
         return implode("", $relationWith);
     }
+    private function generateLoadRelations(): string
+    {
+        $relationWith = [];
+        foreach ($this->commandData->relations as $relation) {
+            $field = (isset($relation->inputs[0])) ? $relation->inputs[0] : null;
+
+            if ($relation->type === 'mt1') {
+                $singularRelation = "";
+                if (!empty($relation->relationName)) {
+                    $singularRelation = $relation->relationName;
+                } elseif (isset($relation->inputs[1])) {
+                    $singularRelation = Str::snake(str_replace('_id', '', strtolower($relation->inputs[1])));
+                }
+                $relationWith[] = "->load('$singularRelation:id,name')";
+            }
+        }
+        return implode("", $relationWith);
+    }
     private function generateResourceFields()
     {
         $resourceFields = [];
@@ -67,9 +86,9 @@ class ControllerGenerator extends BaseGenerator
             if (in_array($field->name, ['created_at', 'updated_at', 'deleted_at'])) {
                 continue;
             }
-            if (Str::endsWith($field->name, '_id')) {
-                $resourceFields[] = "'" . Str::replaceLast('_id', '', $field->name) . "'";
-            }
+            // if (Str::endsWith($field->name, '_id')) {
+            //     $resourceFields[] = "'" . Str::replaceLast('_id', '', $field->name) . "'";
+            // }
             $resourceFields[] = "'" . $field->name . "'";
         }
 

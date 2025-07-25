@@ -1,41 +1,29 @@
 <template>
-  <Layout v-bind="$attrs">
-    <div class="bg-white rounded shadow max-w-3xl p-6">
-      <h1 class="mb-8 font-bold text-xl">
-        <InertiaLink class="text-indigo-400 hover:text-indigo-600" :href="route('$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.index')">$MODEL_NAME_PLURAL_HUMAN$</InertiaLink>
-        <span class="text-indigo-400 font-medium">/</span> Үүсгэх
-      </h1>
-      <form @submit.prevent="submit">
-        <div class="grid grid-cols-2 gap-2">$FIELDS$</div>
-        <div class="px-8 py-4 bg-gray-100 border-t border-gray-200 flex justify-end items-center">
-          <LoadingButton :loading="form.processing" class="btn-indigo">
-            Үүсгэх
-          </LoadingButton>
-        </div>
-      </form>
+  <Layout :title="title">
+    <div>
+      <h1><BackButton href="/admin/$MODEL_NAME_PLURAL_SNAKE$" />{{ title }}</h1>
+      <Fields :data="data" @save="submit"></Fields>
     </div>
   </Layout>
 </template>
 
 <script setup>
-import Layout from "@/Layouts/Admin.vue";
-import LoadingButton from "@/Components/LoadingButton.vue";
-import { useForm } from '@inertiajs/vue3'
-$IMPORT_INPUT$;
+import Layout from "@/Layouts/AdminLayout.vue";
+import BackButton from '@/Components/BackButton.vue';
+import Fields from "./Fields.vue";
 
-const props = defineProps({
-  data: { type: Object, default: () => ({ $INIT_FORM_FIELDS$ }) },
-});
+const title = '$MODEL_NAME_PLURAL_HUMAN$ Үүсгэх'
 
-const form = useForm({
-  $INIT_FORM_FIELDS$,
-  ...(props.data ?? {}),
-  callback: new URLSearchParams(window.location.search).get("callback"),
-});
 
-const submit = () => {
-  form.post(route("$VIEW_PREFIX_LOWER$$MODEL_NAME_PLURAL_SNAKE$.store"), {
+defineProps({
+  data: [Object],
+})
+
+const submit = (form) => {
+  form.post('/admin/$MODEL_NAME_PLURAL_SNAKE$', {
+    headers: { back: new URLSearchParams(window.location.search).get("callback")},
     preserveScroll: true,
+    replace: true,
     onSuccess: () => form.reset(),
     onError: () => ({}),
     onFinish: () => ({}),

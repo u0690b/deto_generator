@@ -14,28 +14,29 @@ class $MODEL_NAME$Controller extends Controller
     /**
      * Display a listing of the $MODEL_NAME$.
      *
-     * @return Response
+     * @return \Inertia\Response|Response|string|bool
      */
     public function index()
     {
-        $$MODEL_NAME_PLURAL_CAMEL$ = $MODEL_NAME$::filter(Request::all(["search", ...$MODEL_NAME$::$searchIn]))$FILTER_RELATION_WITH$;
+        $$MODEL_NAME_PLURAL_CAMEL$ = $MODEL_NAME$::filter(Request::all(["search", ...$MODEL_NAME$::$searchIn]))$FILTER_RELATION_WITH$
+            ->orderBy(Request::input('orderBy') ?? 'id', Request::input('dir') ?? 'asc');
+        
         if (Request::has('only')) {
-            return json_encode($$MODEL_NAME_PLURAL_CAMEL$->paginate(Request::input('per_page'),['$PRIMARY_KEY_NAME$', 'name']));
+            return json_encode($$MODEL_NAME_PLURAL_CAMEL$->cursorPaginate(Request::input('per_page'),['$PRIMARY_KEY_NAME$', 'name']));
         }
+
         return Inertia::render('$VIEW_PREFIX1$$MODEL_NAME_PLURAL_SNAKE$/Index', [
-            'filters' => Request::only(["search", ...$MODEL_NAME$::$searchIn]),
+            'filters' => Request::only(["search", ...$MODEL_NAME$::$searchIn, 'orderBy', 'dir']),
             'datas' => $$MODEL_NAME_PLURAL_CAMEL$
                 ->paginate(Request::input('per_page'))
-                ->withQueryString()
-                ->through(fn ($row) => $row->only($RESOURCE_FIELDS$)),
-            'host' => config('app.url'),
+                ->withQueryString(),
         ]);
     }
 
     /**
      * Show the form for creating a new $MODEL_NAME$.
      *
-     * @return Response
+     * @return \Inertia\Response|Response|string|bool
      */
     public function create()
     {
@@ -45,16 +46,29 @@ class $MODEL_NAME$Controller extends Controller
     /**
      * Store a newly created $MODEL_NAME$ in storage.
      *
-     * @return Response
+     * @return \Inertia\Response|Response|string|bool
      */
     public function store()
     {
         $rule = $MODEL_NAME$::$rules;
         $input =  Request::validate($rule);
-        $MODEL_NAME$::create($input);
-        
-        if ($url = Request::input('callback')) return redirect($url)->with('success', '$MODEL_NAME$ created.');
-        return Redirect::route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')->with('success', '$MODEL_NAME$ created.');
+        $$MODEL_NAME_CAMEL$ = $MODEL_NAME$::create($input);
+        return redirect(Request::header('back') ?? route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.show', $$MODEL_NAME_CAMEL$->getKey()))->with('success', 'Амжилттай үүсгэлээ.');
+    }
+
+    /**
+     * Show the form for editing the specified UserModel.
+     *
+     * @param $MODEL_NAME$ $$MODEL_NAME_CAMEL$
+     *
+     * @return \Inertia\Response|Response|string|bool
+     */
+    public function show($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
+    {
+        $$MODEL_NAME_CAMEL$$LOAD_RELATION_WITH$;
+        return Inertia::render('$VIEW_PREFIX1$$MODEL_NAME_PLURAL_SNAKE$/Show', [
+            'data' =>  $$MODEL_NAME_CAMEL$,
+        ]);
     }
 
     /**
@@ -62,13 +76,13 @@ class $MODEL_NAME$Controller extends Controller
      *
      * @param $MODEL_NAME$ $$MODEL_NAME_CAMEL$
      *
-     * @return Response
+     * @return \Inertia\Response|Response|string|bool
      */
     public function edit($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
+        $$MODEL_NAME_CAMEL$$LOAD_RELATION_WITH$;
         return Inertia::render('$VIEW_PREFIX1$$MODEL_NAME_PLURAL_SNAKE$/Edit', [
             'data' =>  $$MODEL_NAME_CAMEL$,
-            'host' => config('app.url'),
         ]);
     }
 
@@ -77,7 +91,7 @@ class $MODEL_NAME$Controller extends Controller
      *
      * @param $MODEL_NAME$ $$MODEL_NAME_CAMEL$
      *
-     * @return Response
+     * @return \Inertia\Response|Response|string|bool
      */
     public function update($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
@@ -85,8 +99,7 @@ class $MODEL_NAME$Controller extends Controller
         $input =  Request::validate($rule);
         $$MODEL_NAME_CAMEL$->update($input);
         
-        if ($url = Request::input('callback')) return redirect($url)->with('success', '$MODEL_NAME$ created.');
-        return Redirect::route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')->with('success', '$MODEL_NAME$ updated.');
+        return redirect(Request::header('back') ?? route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.show', $$MODEL_NAME_CAMEL$->getKey()))->with('success', 'Ажилттай хадгаллаа.');
     }
 
     /**
@@ -96,12 +109,11 @@ class $MODEL_NAME$Controller extends Controller
      *
      * @throws \Exception
      *
-     * @return Response
+     * @return \Inertia\Response|Response|string|bool
      */
     public function destroy($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
         $$MODEL_NAME_CAMEL$->delete();
-        if ($url = Request::input('callback')) return redirect($url)->with('success', '$MODEL_NAME$ created.');
-        return Redirect::route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index')->with('success', '$MODEL_NAME$ deleted.');
+        return redirect(Request::header('back') ?? route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.index'))->with('success', 'Мэдээлэл устгагдлаа.');
     }
 }

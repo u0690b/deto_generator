@@ -1,16 +1,29 @@
 <template>
-  $FIELDS$
+  <form @submit.prevent="emit('save', form)" class="field-form">
+    <div class="form-grid">
+      $FIELDS$
+    </div>
+    <div class="form-footer">
+      <ButtonPrimary :disabled="!form.isDirty || form.processing">
+        Хадгалах
+      </ButtonPrimary>
+    </div>
+  </form>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import MySelect from './MySelect.vue'
-import { computed } from 'vue'
+import { useForm } from '@inertiajs/vue3'
+import ButtonPrimary from "@/Components/ButtonPrimary.vue";
+$IMPORT_INPUT$
 
-const emit = defineEmits([
-    $EMIT_FIELDS$
-])
+const props = defineProps({
+  data: { type: Object, default: () => ({})},
+});
 
+const emit = defineEmits(['save'])
+const form = useForm({ model: { ...props.data } }).transform((data) => data.model);
+
+/*
 $INIT_COMPUTE_FIELDS$
-
+*/
 </script>

@@ -42,7 +42,7 @@ class ViewGenerator extends BaseGenerator
             $this->commandData->addDynamicVariable('$FILES$', ", 'files' => true");
         }
 
-        $this->commandData->commandComment("\nGenerating Views...");
+        $this->commandData->commandComment("\nGenerating Views1...");
 
         if ($this->commandData->getOption('views')) {
             $viewsToBeGenerated = explode(',', $this->commandData->getOption('views'));
@@ -51,10 +51,11 @@ class ViewGenerator extends BaseGenerator
                 // $this->generateTable();
                 $this->generateIndex();
             }
+            $this->commandData->commandComment('---->fleis' . count(array_intersect(['create', 'update'], $viewsToBeGenerated)));
 
-            //if (count(array_intersect(['create', 'update'], $viewsToBeGenerated)) > 0) {
-            //$this->generateFields('fields');
-            //}
+            if (count(array_intersect(['create', 'update'], $viewsToBeGenerated)) > 0) {
+                $this->generateFields('fields');
+            }
 
             if (in_array('create', $viewsToBeGenerated)) {
                 $this->generateCreate();
@@ -74,7 +75,7 @@ class ViewGenerator extends BaseGenerator
             $this->generateFields('fields');
             $this->generateCreate();
             $this->generateUpdate();
-            $this->generateShowFields();
+            //$this->generateShowFields();
             $this->generateShow();
         }
 
@@ -84,7 +85,7 @@ class ViewGenerator extends BaseGenerator
     private function generateTable()
     {
 
-        $templateData = $this->generateBladeTableBody();
+        $templateData = $this->generateBladeTableBody('table');
 
         FileUtil::createFile($this->path, 'table.blade.php', $templateData);
 
@@ -294,13 +295,12 @@ class ViewGenerator extends BaseGenerator
                 $templateData = str_replace('$PAGINATE$', '', $templateData);
             }
         }
-
-        FileUtil::createFile($this->path, 'Index.vue', $templateData);
+        $this->generateFields($templateName, $templateData);
 
         $this->commandData->commandInfo('Index.vue created');
     }
 
-    private function generateFields($templateName)
+    private function generateFields($templateName, $templateData = '')
     {
         // $templateName = 'fields';
 
@@ -311,6 +311,7 @@ class ViewGenerator extends BaseGenerator
         }
 
         $this->htmlFields = [];
+        $htmlTrFields = [];
 
         foreach ($this->commandData->fields as $field) {
             if (!$field->inForm) {
@@ -345,7 +346,7 @@ class ViewGenerator extends BaseGenerator
                 if ($templateName == "create") {
                     $fieldTemplate = str_replace('$FIELD_NAME_OBJECT$', 'null', $fieldTemplate);
                 } else {
-                    $fieldTemplate = str_replace('$FIELD_NAME_OBJECT$', "data." . Str::replaceLast('_id', '', $field->name), $fieldTemplate);
+                    $fieldTemplate = str_replace('$FIELD_NAME_OBJECT$', "form.model." . Str::replaceLast('_id', '', $field->name), $fieldTemplate);
                 }
             }
             if ($field->htmlType === 'selectTable') {
@@ -382,13 +383,16 @@ class ViewGenerator extends BaseGenerator
                     $field
                 );
                 $this->htmlFields[] = $fieldTemplate;
+                $htmlTrFields[] = '<td>' . $fieldTemplate . '</td>';
             }
         }
-
-        $templateData = get_template('scaffold.views.' . $templateName, $this->templateType);
+        if ($templateData == '') {
+            $templateData = get_template('scaffold.views.' . $templateName, $this->templateType);
+        }
         $templateData = fill_template($this->commandData->dynamicVars, $templateData);
 
         $templateData = str_replace('$FIELDS$', implode("\n          ", $this->htmlFields), $templateData);
+        $templateData = str_replace('$FIELDS_FILTER$', implode("\n                ", $htmlTrFields), $templateData);
         $templateData = str_replace(
             '$FORM_FIELDS$',
             implode(",\n        ", $this->generateResourceFields()),
@@ -414,7 +418,11 @@ class ViewGenerator extends BaseGenerator
             implode(",\n    ", $this->generateComponent()),
             $templateData
         );
-
+        $templateData = str_replace(
+            '$SHOW_FIELD$',
+            implode(",\n  ", $this->generateShowResourceFields()),
+            $templateData
+        );
         FileUtil::createFile($this->path, ucfirst($templateName) . '.vue', $templateData);
         $this->commandData->commandInfo('field.blade.php created');
     }
@@ -443,9 +451,11 @@ class ViewGenerator extends BaseGenerator
                 continue;
             }
             if (Str::endsWith($field->name, '_id')) {
-                $resourceFields[] = "'" . Str::replaceLast('_id', '', $field->name) . ".name':'" . $field->description . "'";
+                $resourceFields[] = "\n  { key: '" . Str::replaceLast('_id', '', $field->name) . ".name', name: '" . ($field->description ?? $field->name) . "', order: '" . $field->name . "', url:'/admin/" . Str::snake(Str::plural(str_replace('_id', '', strtolower($field->name)))) . "' }";
+            } else {
+
+                $resourceFields[] = "\n  { key: '" .  $field->name . "', name: '" . ($field->description ?? $field->name) . "', order: '" . $field->name . "' }";
             }
-            $resourceFields[] = "'" . $field->name . "':'" . $field->description . "'";
         }
 
         return $resourceFields;
@@ -471,7 +481,18 @@ class ViewGenerator extends BaseGenerator
 
         return $resourceFields;
     }
+    private function generateShowResourceFields()
+    {
+        $resourceFields = [];
+        foreach ($this->commandData->fields as $field) {
+            if (Str::endsWith($field->name, '_id'))
+                $resourceFields[] = "{ label: '" . ($field->description ?? $field->name) . "', value: props.data?." . Str::replaceLast('_id', '', $field->name) . "?.name ?? '' }";
+            else
+                $resourceFields[] = "{ label: '" . ($field->description ?? $field->name) . "', value: props.data.$field->name }";
+        }
 
+        return $resourceFields;
+    }
     private function generateComputeResourceFields()
     {
         $resourceFields = [];
@@ -520,6 +541,30 @@ class ViewGenerator extends BaseGenerator
 
         $this->commandData->commandInfo('edit.blade.php created');
     }
+    private function generateShow()
+    {
+        $templateName = 'show';
+
+        $this->generateFields($templateName);
+
+        $this->commandData->commandInfo('show.blade.php created');
+    }
+
+    // private function generateShow()
+    // {
+    //     $templateName = 'show';
+
+    //     if ($this->commandData->isLocalizedTemplates()) {
+    //         $templateName .= '_locale';
+    //     }
+
+    //     $templateData = get_template('scaffold.views.' . $templateName, $this->templateType);
+
+    //     $templateData = fill_template($this->commandData->dynamicVars, $templateData);
+
+    //     FileUtil::createFile($this->path, 'show.blade.php', $templateData);
+    //     $this->commandData->commandInfo('show.blade.php created');
+    // }
 
     private function generateShowFields()
     {
@@ -537,7 +582,7 @@ class ViewGenerator extends BaseGenerator
             }
             $singleFieldStr = str_replace(
                 '$FIELD_NAME_TITLE$',
-                Str::title(str_replace('_', ' ', $field->description)),
+                Str::title(str_replace('_', ' ', $field->description ?? $field->name)),
                 $fieldTemplate
             );
             $singleFieldStr = str_replace('$FIELD_NAME$', $field->name, $singleFieldStr);
@@ -550,21 +595,6 @@ class ViewGenerator extends BaseGenerator
         $this->commandData->commandInfo('show_fields.blade.php created');
     }
 
-    private function generateShow()
-    {
-        $templateName = 'show';
-
-        if ($this->commandData->isLocalizedTemplates()) {
-            $templateName .= '_locale';
-        }
-
-        $templateData = get_template('scaffold.views.' . $templateName, $this->templateType);
-
-        $templateData = fill_template($this->commandData->dynamicVars, $templateData);
-
-        FileUtil::createFile($this->path, 'show.blade.php', $templateData);
-        $this->commandData->commandInfo('show.blade.php created');
-    }
 
     public function rollback($views = [])
     {

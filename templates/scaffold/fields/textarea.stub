@@ -1,1 +1,1 @@
-<textarea-input v-model="form.$FIELD_NAME$" type="text" :error="form.errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" />
+<textarea-input v-model="form.$FIELD_NAME$"  :error="form.errors.$FIELD_NAME$" class="" label="$FIELD_NAME_TITLE$" />

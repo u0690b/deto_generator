@@ -1,1 +1,1 @@
-<MyInput v-model="form.$FIELD_NAME$" type="file" :error="form.errors.$FIELD_NAME$" class="" accept="image/*" label="$FIELD_NAME_TITLE$"/>
+<MyInput v-model="form.model.$FIELD_NAME$" type="file" :error="form.errors.$FIELD_NAME$" class="" accept="image/*" label="$FIELD_NAME_TITLE$"/>

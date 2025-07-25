@@ -1,1 +1,1 @@
-  "/$MODEL_NAME_PLURAL_SNAKE$":"$MODEL_NAME_PLURAL_HUMAN$"
+{ text:'$MODEL_NAME_PLURAL_HUMAN$',href:'/admin/$MODEL_NAME_PLURAL_SNAKE$',icon: 'ti-receipt'}

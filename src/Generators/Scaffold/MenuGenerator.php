@@ -26,7 +26,7 @@ class MenuGenerator extends BaseGenerator
     public function __construct(CommandData $commandData)
     {
         $this->commandData = $commandData;
-        $this->path = resource_path('js/Components/') . "AdminMenu.vue";
+        $this->path = resource_path('js/Components/') . "AdminMenuList.js";
         $this->templateType = config('deto.laravel_generator.templates', 'deto_generator');
 
         $this->menuContents = file_get_contents($this->path);
@@ -47,13 +47,13 @@ class MenuGenerator extends BaseGenerator
 
         // $this->menuContents .= $this->menuTemplate.infy_nl();
         // $existingMenuContents = file_get_contents($this->path);
-        if (Str::contains($this->menuContents, $this->menuTemplate . infy_nl(),)) {
+        if (Str::contains($this->menuContents, $this->menuTemplate,)) {
             $this->commandData->commandObj->info('Menu ' . $this->commandData->config->mHumanPlural . ' is already exists, Skipping Adjustment.');
             return;
         }
         $this->menuContents = str_replace(
             "// admin_menu",
-            $this->menuTemplate . infy_nl() . " \n // admin_menu",
+            $this->menuTemplate.',' . infy_nl() . "    // admin_menu",
             $this->menuContents
         );
         file_put_contents($this->path, $this->menuContents);

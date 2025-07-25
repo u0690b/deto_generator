@@ -2,5 +2,5 @@
      * Display a listing of the $MODEL_NAME$.
      * GET|HEAD /$MODEL_NAME_PLURAL_CAMEL$
      *
-     * @return Response
+     * @return \Inertia\Response|Response|string|bool
      */

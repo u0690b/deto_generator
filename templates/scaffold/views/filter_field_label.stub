@@ -1,0 +1,1 @@
+        <MyInput v-model="form.model.$FIELD_NAME$" label="$FIELD_NAME_TITLE$" :url="`/admin/$FILTER_RELATION_MODEL_NAME_SNAKE$`" />
