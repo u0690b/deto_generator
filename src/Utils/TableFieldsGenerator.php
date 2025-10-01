@@ -2,10 +2,11 @@
 
 namespace Deto\Generator\Utils;
 
-use DB;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Deto\Generator\Common\GeneratorConfig;
 use Deto\Generator\Common\GeneratorField;
 use Deto\Generator\Common\GeneratorFieldRelation;
 
@@ -56,42 +57,27 @@ class TableFieldsGenerator
     /** @var array */
     public $ignoredFields;
 
+    /** @var \Doctrine\DBAL\Schema\Table */
+    public $tableDetails;
+
+    public GeneratorConfig $config;
+
     public function __construct($tableName, $ignoredFields, $connection = '')
     {
         $this->tableName = $tableName;
         $this->ignoredFields = $ignoredFields;
 
-        if (!empty($connection)) {
-            $this->schemaManager = DB::connection($connection)->getDoctrineSchemaManager();
-        } else {
-            $this->schemaManager = DB::getDoctrineSchemaManager();
-        }
-
-        $platform = $this->schemaManager->getDatabasePlatform();
-        $defaultMappings = [
-            'enum' => 'string',
-            'json' => 'json',
-            'bit'  => 'boolean',
-        ];
-
-        $mappings = config('deto.laravel_generator.from_table.doctrine_mappings', []);
-        $mappings = array_merge($mappings, $defaultMappings);
-        foreach ($mappings as $dbType => $doctrineType) {
-            $platform->registerDoctrineTypeMapping($dbType, $doctrineType);
-        }
-
-        $columns = $this->schemaManager->listTableColumns($tableName);
-
+        $columns = Schema::getColumns($tableName);
         $this->columns = [];
         foreach ($columns as $column) {
-            if (!in_array($column->getName(), $ignoredFields)) {
+            if (!in_array($column['name'], $ignoredFields)) {
                 $this->columns[] = $column;
             }
         }
 
         $this->primaryKey = $this->getPrimaryKeyOfTable($tableName);
         $this->timestamps = static::getTimestampFieldNames();
-        $this->defaultSearchable = config('deto.laravel_generator.options.tables_searchable_default', false);
+        $this->defaultSearchable = config('laravel_generator.options.tables_searchable_default', false);
     }
 
     /**
@@ -100,7 +86,7 @@ class TableFieldsGenerator
     public function prepareFieldsFromTable()
     {
         foreach ($this->columns as $column) {
-            $type = $column->getType()->getName();
+            $type = $column['type_name'];
 
             switch ($type) {
                 case 'integer':
@@ -113,8 +99,8 @@ class TableFieldsGenerator
                     $field = $this->generateIntFieldInput($column, 'bigInteger');
                     break;
                 case 'boolean':
-                    $name = Str::title(str_replace('_', ' ', $column->getName()));
-                    $field = $this->generateField($column, 'boolean', 'checkbox,1');
+                    $name = Str::title(str_replace('_', ' ', $column['name']));
+                    $field = $this->generateField($column, 'boolean', 'checkbox');
                     break;
                 case 'datetime':
                     $field = $this->generateField($column, 'datetime', 'date');
@@ -133,9 +119,6 @@ class TableFieldsGenerator
                     break;
                 case 'float':
                     $field = $this->generateNumberInput($column, 'float');
-                    break;
-                case 'string':
-                    $field = $this->generateField($column, 'string', 'text');
                     break;
                 case 'text':
                     $field = $this->generateField($column, 'text', 'textarea');
@@ -156,8 +139,8 @@ class TableFieldsGenerator
                 $field->inIndex = false;
                 $field->inView = false;
             }
-            $field->isNotNull = (bool) $column->getNotNull();
-            $field->description = $column->getComment(); // get comments from table
+            $field->isNotNull = !$column['nullable'];
+            $field->description = $column['comment'] ?? ''; // get comments from table
 
             $this->fields[] = $field;
         }
@@ -172,9 +155,14 @@ class TableFieldsGenerator
      */
     public function getPrimaryKeyOfTable($tableName)
     {
-        $column = $this->schemaManager->listTableDetails($tableName)->getPrimaryKey();
+        $column = '';
+        foreach (Schema::getIndexes($tableName) as $index) {
+            if ($index['primary']) {
+                $column = $index['columns'][0];
+            }
+        }
 
-        return $column ? $column->getColumns()[0] : '';
+        return $column;
     }
 
     /**
@@ -184,13 +172,13 @@ class TableFieldsGenerator
      */
     public static function getTimestampFieldNames()
     {
-        if (!config('deto.laravel_generator.timestamps.enabled', true)) {
+        if (!config('laravel_generator.timestamps.enabled', true)) {
             return [];
         }
 
-        $createdAtName = config('deto.laravel_generator.timestamps.created_at', 'created_at');
-        $updatedAtName = config('deto.laravel_generator.timestamps.updated_at', 'updated_at');
-        $deletedAtName = config('deto.laravel_generator.timestamps.deleted_at', 'deleted_at');
+        $createdAtName = config('laravel_generator.timestamps.created_at', 'created_at');
+        $updatedAtName = config('laravel_generator.timestamps.updated_at', 'updated_at');
+        $deletedAtName = config('laravel_generator.timestamps.deleted_at', 'deleted_at');
 
         return [$createdAtName, $updatedAtName, $deletedAtName];
     }
@@ -206,17 +194,17 @@ class TableFieldsGenerator
     private function generateIntFieldInput($column, $dbType)
     {
         $field = new GeneratorField();
-        $field->name = $column->getName();
+        $field->name = $column['name'];
         $field->parseDBType($dbType);
         $field->htmlType = 'number';
 
-        if ($column->getAutoincrement()) {
+        if ($column['auto_increment']) {
             $field->dbInput .= ',true';
         } else {
             $field->dbInput .= ',false';
         }
 
-        if ($column->getUnsigned()) {
+        if (str_contains($column['type'], 'unsigned')) {
             $field->dbInput .= ',true';
         }
 
@@ -248,16 +236,17 @@ class TableFieldsGenerator
      * Generates field.
      *
      * @param Column $column
-     * @param $dbType
-     * @param $htmlType
+     * @param        $dbType
+     * @param        $htmlType
      *
      * @return GeneratorField
      */
     private function generateField($column, $dbType, $htmlType)
     {
         $field = new GeneratorField();
-        $field->name = $column->getName();
-        $field->parseDBType($dbType, $column);
+        $field->name = $column['name'];
+        $field->fieldDetails = $column;
+        $field->parseDBType($dbType); //, $column); TODO: handle column param
         $field->parseHtmlInput($htmlType);
 
         return $this->checkForPrimary($field);
@@ -274,12 +263,13 @@ class TableFieldsGenerator
     private function generateNumberInput($column, $dbType)
     {
         $field = new GeneratorField();
-        $field->name = $column->getName();
-        $field->parseDBType($dbType . ',' . $column->getPrecision() . ',' . $column->getScale());
+        $field->name = $column['name'];
+        $length = get_field_length($column['type']);
+        $field->parseDBType($dbType . ',' . get_field_precision($length) . ',' . get_field_scale($length));
         $field->htmlType = 'number';
 
         if ($dbType === 'decimal') {
-            $field->numberDecimalPoints = $column->getScale();
+            $field->numberDecimalPoints = explode(',', $length)[1];
         }
 
         return $this->checkForPrimary($field);
@@ -301,25 +291,27 @@ class TableFieldsGenerator
      */
     public function prepareForeignKeys()
     {
-        $tables = $this->schemaManager->listTables();
+        $tables = Schema::getTables();
 
         $fields = [];
 
         foreach ($tables as $table) {
-            $primaryKey = $table->getPrimaryKey();
-            if ($primaryKey) {
-                $primaryKey = $primaryKey->getColumns()[0];
+            $primaryKey = '';
+            foreach (Schema::getIndexes($table['name']) as $index) {
+                if ($index['primary']) {
+                    $primaryKey = $index['columns'][0];
+                }
             }
             $formattedForeignKeys = [];
-            $tableForeignKeys = $table->getForeignKeys();
+            $tableForeignKeys = Schema::getForeignKeys($table['name']);
             foreach ($tableForeignKeys as $tableForeignKey) {
                 $generatorForeignKey = new GeneratorForeignKey();
-                $generatorForeignKey->name = $tableForeignKey->getName();
-                $generatorForeignKey->localField = $tableForeignKey->getLocalColumns()[0];
-                $generatorForeignKey->foreignField = $tableForeignKey->getForeignColumns()[0];
-                $generatorForeignKey->foreignTable = $tableForeignKey->getForeignTableName();
-                $generatorForeignKey->onUpdate = $tableForeignKey->onUpdate();
-                $generatorForeignKey->onDelete = $tableForeignKey->onDelete();
+                $generatorForeignKey->name = $tableForeignKey['name'];
+                $generatorForeignKey->localField = $tableForeignKey['columns'][0];
+                $generatorForeignKey->foreignField = $tableForeignKey['foreign_columns'][0];
+                $generatorForeignKey->foreignTable = $tableForeignKey['foreign_table'];
+                $generatorForeignKey->onUpdate = $tableForeignKey['on_update'];
+                $generatorForeignKey->onDelete = $tableForeignKey['on_delete'];
 
                 $formattedForeignKeys[] = $generatorForeignKey;
             }
@@ -328,7 +320,7 @@ class TableFieldsGenerator
             $generatorTable->primaryKey = $primaryKey;
             $generatorTable->foreignKeys = $formattedForeignKeys;
 
-            $fields[$table->getName()] = $generatorTable;
+            $fields[$table['name']] = $generatorTable;
         }
 
         return $fields;
@@ -372,7 +364,6 @@ class TableFieldsGenerator
             foreach ($foreignKeys as $foreignKey) {
                 // check if foreign key is on the model table for which we are using generator command
                 if ($foreignKey->foreignTable == $modelTableName) {
-
                     // detect if one to one relationship is there
                     $isOneToOne = $this->isOneToOne($primary, $foreignKey, $modelTable->primaryKey);
                     if ($isOneToOne) {

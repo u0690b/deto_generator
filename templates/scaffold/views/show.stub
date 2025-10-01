@@ -1,20 +1,22 @@
 <template>
   <Layout :title="title">
-    <div>
-      <h1>
-        <BackButton href="/admin/$MODEL_NAME_PLURAL_SNAKE$" />{{ title }}
-        <ILink class="float-right ml-4 btn btn-warning" :href="`/admin/$MODEL_NAME_PLURAL_SNAKE$/${data.id}/edit`">Засах</ILink>
-        <DestroyButton :href="'/admin/$MODEL_NAME_PLURAL_SNAKE$/' + props.data.id" class="float-right">Устгах</DestroyButton>
-      </h1>
-      <div class="show-grid">
-        <InputLabel v-for="item in fields" :key="item.label" v-bind="item" class="border-b border-dashed" />
+   <div class="p-4 mt-8 sm:px-8 sm:py-4 ">
+      <div class="p-4 bg-white rounded shadow">
+        <h1>
+          <BackButton href="/admin/$MODEL_NAME_PLURAL_SNAKE$" />{{ title }}
+          <ILink class="float-right ml-4 btn btn-warning" :href="`/admin/$MODEL_NAME_PLURAL_SNAKE$/${data.id}/edit`">Засах</ILink>
+          <DestroyButton :href="'/admin/$MODEL_NAME_PLURAL_SNAKE$/' + props.data.id" class="float-right">Устгах</DestroyButton>
+        </h1>
+        <div class="show-grid">
+          <InputLabel v-for="item in fields" :key="item.label" v-bind="item" class="border-b border-dashed" />
+        </div>
       </div>
     </div>
   </Layout>
 </template>
 
 <script setup>
-import Layout from '@/Layouts/AdminLayout.vue';
+import Layout from '@/Layouts/Admin.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import BackButton from '@/Components/BackButton.vue';
 import DestroyButton from '@/Components/DestroyButton.vue';

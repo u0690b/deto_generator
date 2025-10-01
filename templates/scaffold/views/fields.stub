@@ -3,7 +3,7 @@
     <div class="form-grid">
       $FIELDS$
     </div>
-    <div class="form-footer">
+    <div class="flex justify-end pt-4 mt-4 border-t">
       <ButtonPrimary :disabled="!form.isDirty || form.processing">
         Хадгалах
       </ButtonPrimary>

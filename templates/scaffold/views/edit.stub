@@ -1,14 +1,16 @@
 <template>
   <Layout :title="title">
-    <div>
-      <h1><BackButton href="/admin/$MODEL_NAME_PLURAL_SNAKE$" />{{ title }}</h1>
-      <Fields :data="data" @save="submit"></Fields>
+    <div class="p-4 mt-8 sm:px-8 sm:py-4 ">
+      <div class="p-4 bg-white rounded shadow">
+        <h1><BackButton href="/admin/$MODEL_NAME_PLURAL_SNAKE$" />{{ title }}</h1>
+        <Fields :data="data" @save="submit"></Fields>
+      </div>
     </div>
   </Layout>
 </template>
 
 <script setup>
-import Layout from "@/Layouts/AdminLayout.vue";
+import Layout from "@/Layouts/Admin.vue";
 import BackButton from '@/Components/BackButton.vue';
 import Fields from "./Fields.vue";
 

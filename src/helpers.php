@@ -72,7 +72,7 @@ if (!function_exists('infy_nl_tab')) {
      */
     function infy_nl_tab($lns = 1, $tabs = 1, $spaces = 4)
     {
-        return infy_nls($lns).infy_tabs($tabs, $spaces = 4);
+        return infy_nls($lns) . infy_tabs($tabs, $spaces = 4);
     }
 }
 
@@ -94,13 +94,13 @@ if (!function_exists('get_template_file_path')) {
             resource_path('uugaa/deto_generator/')
         );
 
-        $path = $templatesPath.$templateName.'.stub';
+        $path = $templatesPath . $templateName . '.stub';
 
         if (file_exists($path)) {
             return $path;
         }
 
-        return get_templates_package_path($templateType).'/templates/'.$templateName.'.stub';
+        return get_templates_package_path($templateType) . '/templates/' . $templateName . '.stub';
     }
 }
 
@@ -115,7 +115,7 @@ if (!function_exists('get_templates_package_path')) {
     function get_templates_package_path($templateType)
     {
         if (strpos($templateType, '/') === false) {
-            $templateType = base_path('vendor/uugaa/').$templateType;
+            $templateType = base_path('vendor/uugaa/') . $templateType;
         }
 
         return $templateType;
@@ -250,5 +250,34 @@ if (!function_exists('model_name_from_table_name')) {
     function model_name_from_table_name($tableName)
     {
         return Str::ucfirst(Str::camel(Str::singular($tableName)));
+    }
+}
+
+
+
+if (!function_exists('get_field_length')) {
+    function get_field_length($type): string
+    {
+        preg_match('/\(\s*(\d+(?:,\s*\d+)*)\s*\)/', $type, $matches);
+
+        return $matches[1] ?? 0;
+    }
+}
+
+if (!function_exists('get_field_precision')) {
+    function get_field_precision($length): int
+    {
+        $precision = explode(',', $length);
+
+        return $precision[0] ?? 0;
+    }
+}
+
+if (!function_exists('get_field_scale')) {
+    function get_field_scale($length): int
+    {
+        $precision = explode(',', $length);
+
+        return $precision[1] ?? 0;
     }
 }
